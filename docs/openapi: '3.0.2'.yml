@@ -1,0 +1,267 @@
+openapi: "3.0.2"
+info:
+  title: Sipencari API
+  version: "1.0"
+servers:
+  - url: https://test.sipencari.com/api/v1
+    description: "Server for testing"
+  - url: https://prod.sipencari.com/api/v1
+    description: "Server Production"
+tags:
+  - name: Authentication
+    description: Endpoint for Authentication
+  - name: User - Profile
+    description: Ednpoint for Profile
+  - name: User - Setting
+    description: Endpoint for Setting
+  - name: User - Missing Post
+    description: Endpoint for Missing Post
+  - name: User - Comment
+    description: Endpoint for Comment Missing Post
+  - name: User - Like Missing Post
+    description: Endpoint for Liking Missing Post
+  - name: User - Like Comment
+    description: Endpoint for Liking Comment
+
+paths:
+  # Authentication
+  /auth/register:
+    post:
+      tags:
+        - "Authentication"
+      summary: Registering User
+      responses:
+        "200":
+          description: OK
+
+  /auth/login:
+    post:
+      summary: Requesting Access
+      tags:
+        - "Authentication"
+      responses:
+        "200":
+          description: OK
+
+  /auth/forgot-password:
+    post:
+      tags:
+        - "Authentication"
+      summary: Reset Password
+      responses:
+        "200":
+          description: OK
+
+  /auth/logout:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "Authentication"
+      summary: Logout | Delete Access
+      responses:
+        "200":
+          description: OK
+
+  /auth/refresh-token:
+    post:
+      security:
+        - BearerAuth: []
+        - RefreshAuth: []
+
+      summary: Refreshing Access
+      tags:
+        - "Authentication"
+
+      responses:
+        "200":
+          description: OK
+
+  # User Profile
+  /user/profile:
+    get:
+      security:
+        - BearerAuth: []
+      summary: Get My Profile
+      tags:
+        - "User - Profile"
+      responses:
+        "200":
+          description: OK
+
+  /user/{user_id}/profile:
+    get:
+      security:
+        - BearerAuth: []
+      summary: Get Other User Profile
+      tags:
+        - "User - Profile"
+      responses:
+        "200":
+          description: OK
+
+  # User Setting
+  /user/setting/update-data:
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Setting"
+      responses:
+        "200":
+          description: OK
+
+  /user/setting/update-password:
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Setting"
+      responses:
+        "200":
+          description: OK
+
+  /user/setting/update-email:
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Setting"
+      responses:
+        "200":
+          description: OK
+
+  /user/setting/update-image:
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Setting"
+      responses:
+        "200":
+          description: OK
+
+  # User Post
+  /missing-posts/my-post:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Missing Post"
+      responses:
+        "200":
+          description: OK
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Missing Post"
+      responses:
+        "200":
+          description: OK
+
+  /missing-posts:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Missing Post"
+      responses:
+        "200":
+          description: OK
+
+  /missing-posts/{missing-post-id}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Missing Post"
+      responses:
+        "200":
+          description: OK
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Missing Post"
+      responses:
+        "200":
+          description: OK
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Missing Post"
+      responses:
+        "200":
+          description: OK
+  
+  # User Comment Missing Post
+  /missing-posts/{missing-post-id}/comments:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Comment"
+      responses:
+        "200":
+          description: OK
+  /missing-posts/{missing-post-id}/comments/{comment_id}:
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Comment"
+      responses:
+        "200":
+          description: OK
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Comment"
+      responses:
+        "200":
+          description: OK
+
+  # User Like Missing Post
+  /missing-posts/{missing-post-id}/likes:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Like Missing Post"
+      responses:
+        "200":
+          description: OK
+  
+  # User Like Comment
+  /missing-posts/{missing-post-id}/comments/{comment-id}/likes:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Like Comment"
+      responses:
+        "200":
+          description: OK
+
+  # deffault
+  /:
+    get:
+      responses:
+        "200":
+          description: OK
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT Token Required to access this endpoint
+    RefreshAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Refresh Token required to access this endpoint
