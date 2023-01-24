@@ -48,7 +48,7 @@ func (ur *userRepository) GetAll(Page int, Size int, SortBy, Search, SearchQ, Ro
 	} else if SortBy != "" && SearchQ != "" && RoleQ == "" {
 		model = ur.conn.Model(&rec).Order(SortBy).Where(SearchQ, Search)
 	} else {
-		model = ur.conn.Model(&rec).Order(SortBy).Where(RoleQ, Role).Where(SearchQ, Search).Where(RoleQ, Role)
+		model = ur.conn.Model(&rec).Order(SortBy).Where(RoleQ, Role).Where(SearchQ, Search)
 	}
 
 	if err := model.Find(&rec); err != nil {
