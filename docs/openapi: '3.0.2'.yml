@@ -7,11 +7,16 @@ servers:
     description: "Server for testing"
   - url: https://prod.sipencari.com/api/v1
     description: "Server Production"
+  - url: http://localhost:8080/api/v1
 tags:
+  - name: Greetings
+    description: Endpoint for Greets
   - name: Authentication
     description: Endpoint for Authentication
   - name: User - Profile
-    description: Ednpoint for Profile
+    description: Endpoint for Profile
+  - name: User - Reset Password
+    description: Endpoint for Reset Password
   - name: User - Setting
     description: Endpoint for Setting
   - name: User - Missing Post
@@ -22,14 +27,55 @@ tags:
     description: Endpoint for Liking Missing Post
   - name: User - Like Comment
     description: Endpoint for Liking Comment
+  - name: Admin - Missing Post
+    description: Manage Missing Post(for admin & super admin calls only)
+  - name: Admin - Comment
+    description: Manage Comment(for admin & super admin calls only)
+  - name: Admin - Like Missing
+    description: Like & Unliking User Comment(for admin & super admin calls only)
+  - name: Admin - Like Comment
+    description: Like & Unliking User Comment(for admin & super admin calls only)
+  - name: Admin - User
+    description: Manage User(for admin & super admin calls only)
+  - name: SuperAdmin - Admin
+    description: Manage Admin(for super admin calls only)
 
 paths:
+  #Greets
+  /:
+    get:
+      tags:
+        - "Greetings"
+      summary: Greets
+      responses:
+        "200":
+          description: OK
+
   # Authentication
   /auth/register:
     post:
       tags:
         - "Authentication"
       summary: Registering User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: sutrisno agung
+                email:
+                  type: string
+                  example: ardhidhani@gmail.com
+                password:
+                  type: string
+                  example: inipassword
       responses:
         "200":
           description: OK
@@ -39,43 +85,47 @@ paths:
       summary: Requesting Access
       tags:
         - "Authentication"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: ardhidhani@gmail.com
+                password:
+                  type: string
+                  example: inipassword
       responses:
         "200":
           description: OK
 
-  /auth/forgot-password:
-    post:
-      tags:
-        - "Authentication"
-      summary: Reset Password
-      responses:
-        "200":
-          description: OK
+  # /auth/forgot-password:
+  #   post:
+  #     tags:
+  #       - "Authentication"
+  #     summary: Reset Password
+  #     responses:
+  #       "200":
+  #         description: OK
 
-  /auth/logout:
-    post:
-      security:
-        - BearerAuth: []
-      tags:
-        - "Authentication"
-      summary: Logout | Delete Access
-      responses:
-        "200":
-          description: OK
+  # /auth/refresh-token:
+  #   post:
+  #     security:
+  #       - BearerAuth: []
+  #       - RefreshAuth: []
 
-  /auth/refresh-token:
-    post:
-      security:
-        - BearerAuth: []
-        - RefreshAuth: []
+  #     summary: Refreshing Access
+  #     tags:
+  #       - "Authentication"
 
-      summary: Refreshing Access
-      tags:
-        - "Authentication"
-
-      responses:
-        "200":
-          description: OK
+  #     responses:
+  #       "200":
+  #         description: OK
 
   # User Profile
   /user/profile:
@@ -89,13 +139,20 @@ paths:
         "200":
           description: OK
 
-  /user/{user_id}/profile:
+  /user/profile/{user_id}:
     get:
       security:
         - BearerAuth: []
       summary: Get Other User Profile
       tags:
         - "User - Profile"
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the user to update the spesific user
       responses:
         "200":
           description: OK
@@ -107,6 +164,21 @@ paths:
         - BearerAuth: []
       tags:
         - "User - Setting"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+              properties:
+                name:
+                  type: string
+                  example: diganti namanya
+                email:
+                  type: string
+                  example: ardhidhani@gmail.com
       responses:
         "200":
           description: OK
@@ -117,26 +189,66 @@ paths:
         - BearerAuth: []
       tags:
         - "User - Setting"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - old_password
+                - new_password
+              properties:
+                old_password:
+                  type: string
+                  example: password lama
+                new_password:
+                  type: string
+                  example: password baru
       responses:
         "200":
           description: OK
 
-  /user/setting/update-email:
+  /user/setting/update-picture:
     put:
       security:
         - BearerAuth: []
       tags:
         - "User - Setting"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - picture
+              properties:
+                picture:
+                  type: string
+                  format: binary
+            encoding:
+              picture:
+                contentType: image/png, image/jpeg
       responses:
         "200":
           description: OK
 
-  /user/setting/update-image:
+  /user/setting/update-address:
     put:
       security:
         - BearerAuth: []
       tags:
         - "User - Setting"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - address
+              properties:
+                picture:
+                  type: string
+                  example: jl tugu
       responses:
         "200":
           description: OK
@@ -195,7 +307,7 @@ paths:
       responses:
         "200":
           description: OK
-  
+
   # User Comment Missing Post
   /missing-posts/{missing-post-id}/comments:
     post:
@@ -234,7 +346,7 @@ paths:
       responses:
         "200":
           description: OK
-  
+
   # User Like Comment
   /missing-posts/{missing-post-id}/comments/{comment-id}/likes:
     post:
@@ -247,11 +359,11 @@ paths:
           description: OK
 
   # deffault
-  /:
-    get:
-      responses:
-        "200":
-          description: OK
+  # /:
+  #   get:
+  #     responses:
+  #       "200":
+  #         description: OK
 
 components:
   securitySchemes:
