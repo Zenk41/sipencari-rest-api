@@ -5,7 +5,7 @@ type CategoryEnum string
 const (
 	CategoryPet   CategoryEnum = "Pet"
 	CategoryHuman CategoryEnum = "Human"
-	CategoryGoods CategoryEnum = "Enum"
+	CategoryGoods CategoryEnum = "Goods"
 )
 
 func (ce CategoryEnum) String() string {
