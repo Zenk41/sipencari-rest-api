@@ -3,9 +3,9 @@ package constant
 type CategoryEnum string
 
 const (
-	CategoryPet   CategoryEnum = "Superadmin"
-	CategoryHuman CategoryEnum = "Admin"
-	CategoryGoods CategoryEnum = "User"
+	CategoryPet   CategoryEnum = "Pet"
+	CategoryHuman CategoryEnum = "Human"
+	CategoryGoods CategoryEnum = "Enum"
 )
 
 func (ce CategoryEnum) String() string {
