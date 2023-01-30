@@ -1,0 +1,32 @@
+name: Deploy Prod
+on: 
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: pull-test-deploy
+        uses: appleboy/ssh-action@master
+        with:
+          proxy_timeout: 60m
+          host: ${{secrets.HOST_PROD }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd app
+            git pull origin master
+            docker-compose down && docker-compose up --build -d
