@@ -35,13 +35,8 @@ type Discussion struct {
 }
 
 func DiscussionResponse(discussion models.Discussion) *Discussion {
-
 	var CommentTotalD int = 0
 	var LikeTotalD int = 0
-	var ReactionTotalC int = 0
-	var LikeTotalC int = 0
-	var HelpfulNo int = 0
-	var HelpfulYes int = 0
 	// picture
 	var pictures []resPicD.DiscussionPicture
 	picturesData := discussion.DiscussionPictures
@@ -78,6 +73,10 @@ func DiscussionResponse(discussion models.Discussion) *Discussion {
 	var comments []resCommentD.Comment
 	commentsData := discussion.Comments
 	for _, comment := range commentsData {
+		var ReactionTotalC int = 0
+		var LikeTotalC int = 0
+		var HelpfulNo int = 0
+		var HelpfulYes int = 0
 		CommentTotalD += 1
 		// Picture in Comment
 		var picturesC []resComPic.CommentPicture
@@ -133,30 +132,31 @@ func DiscussionResponse(discussion models.Discussion) *Discussion {
 				CreatedAt: reaction.CreatedAt,
 				UpdatedAt: reaction.UpdatedAt,
 			})
-
-			comments = append(comments, resCommentD.Comment{
-				CommentID:       comment.CommentID,
-				Message:         comment.Message,
-				DiscussionID:    comment.DiscussionID,
-				CommentPictures: picturesC,
-				CommentLikes:    likesC,
-				CommentReaction: reactionsC,
-				ParrentComment:  comment.ParrentComment,
-				UserID:          comment.UserID,
-				User: resUser.User{
-					UserID:  comment.UserID,
-					Name:    comment.User.Name,
-					Picture: comment.User.Picture,
-					Email:   comment.User.Email,
-				},
-				LikeTotal:       &LikeTotalC,
-				TotalReaction:   &ReactionTotalC,
-				TotalHelpfulYes: &HelpfulYes,
-				TotalHelpfulNo:  &HelpfulNo,
-				CreatedAt:       comment.CreatedAt,
-				UpdatedAt:       comment.UpdatedAt,
-			})
 		}
+
+		comments = append(comments, resCommentD.Comment{
+			CommentID:       comment.CommentID,
+			Message:         comment.Message,
+			DiscussionID:    comment.DiscussionID,
+			CommentPictures: picturesC,
+			CommentLikes:    likesC,
+			CommentReaction: reactionsC,
+			ParrentComment:  comment.ParrentComment,
+			UserID:          comment.UserID,
+			User: resUser.User{
+				UserID:  comment.UserID,
+				Name:    comment.User.Name,
+				Picture: comment.User.Picture,
+				Email:   comment.User.Email,
+			},
+			LikeTotal:       &LikeTotalC,
+			TotalReaction:   &ReactionTotalC,
+			TotalHelpfulYes: &HelpfulYes,
+			TotalHelpfulNo:  &HelpfulNo,
+			CreatedAt:       comment.CreatedAt,
+			UpdatedAt:       comment.UpdatedAt,
+		})
+
 	}
 
 	return &Discussion{
@@ -195,10 +195,7 @@ func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
 	for _, discussion := range discussions {
 		var CommentTotalD int = 0
 		var LikeTotalD int = 0
-		var ReactionTotalC int = 0
-		var LikeTotalC int = 0
-		var HelpfulNo int = 0
-		var HelpfulYes int = 0
+
 		// picture
 		var pictures []resPicD.DiscussionPicture
 		picturesData := discussion.DiscussionPictures
@@ -235,6 +232,10 @@ func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
 		var comments []resCommentD.Comment
 		commentsData := discussion.Comments
 		for _, comment := range commentsData {
+			var ReactionTotalC int = 0
+			var LikeTotalC int = 0
+			var HelpfulNo int = 0
+			var HelpfulYes int = 0
 			CommentTotalD += 1
 			// Picture in Comment
 			var picturesC []resComPic.CommentPicture
@@ -290,30 +291,30 @@ func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
 					CreatedAt: reaction.CreatedAt,
 					UpdatedAt: reaction.UpdatedAt,
 				})
-
-				comments = append(comments, resCommentD.Comment{
-					CommentID:       comment.CommentID,
-					Message:         comment.Message,
-					DiscussionID:    comment.DiscussionID,
-					CommentPictures: picturesC,
-					CommentLikes:    likesC,
-					CommentReaction: reactionsC,
-					ParrentComment:  comment.ParrentComment,
-					UserID:          comment.UserID,
-					User: resUser.User{
-						UserID:  comment.UserID,
-						Name:    comment.User.Name,
-						Picture: comment.User.Picture,
-						Email:   comment.User.Email,
-					},
-					LikeTotal:       &LikeTotalC,
-					TotalReaction:   &ReactionTotalC,
-					TotalHelpfulYes: &HelpfulYes,
-					TotalHelpfulNo:  &HelpfulNo,
-					CreatedAt:       comment.CreatedAt,
-					UpdatedAt:       comment.UpdatedAt,
-				})
 			}
+
+			comments = append(comments, resCommentD.Comment{
+				CommentID:       comment.CommentID,
+				Message:         comment.Message,
+				DiscussionID:    comment.DiscussionID,
+				CommentPictures: picturesC,
+				CommentLikes:    likesC,
+				CommentReaction: reactionsC,
+				ParrentComment:  comment.ParrentComment,
+				UserID:          comment.UserID,
+				User: resUser.User{
+					UserID:  comment.UserID,
+					Name:    comment.User.Name,
+					Picture: comment.User.Picture,
+					Email:   comment.User.Email,
+				},
+				LikeTotal:       &LikeTotalC,
+				TotalReaction:   &ReactionTotalC,
+				TotalHelpfulYes: &HelpfulYes,
+				TotalHelpfulNo:  &HelpfulNo,
+				CreatedAt:       comment.CreatedAt,
+				UpdatedAt:       comment.UpdatedAt,
+			})
 		}
 
 		response := Discussion{
