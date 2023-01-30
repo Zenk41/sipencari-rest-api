@@ -55,7 +55,7 @@ func (uh *userHandler) Register(c echo.Context) error {
 	}
 
 	if err := uh.validate.Struct(&input); err != nil {
-		return response.NewResponseFailed(c, http.StatusBadGateway, "failed", "validation failed", nil, err.Error())
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
 	userResponse, err := uh.service.Create(input, constant.RoleUser.String())
@@ -74,7 +74,7 @@ func (uh *userHandler) Login(c echo.Context) error {
 	}
 
 	if err := uh.validate.Struct(&input); err != nil {
-		return response.NewResponseFailed(c, http.StatusBadGateway, "failed", "validation failed", nil, err.Error())
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
 	loginResponse, err := uh.service.Login(input)
@@ -111,7 +111,7 @@ func (uh *userHandler) ChangePictureByUser(c echo.Context) error {
 	}
 
 	if err := uh.validate.Struct(&input); err != nil {
-		return response.NewResponseFailed(c, http.StatusBadGateway, "failed", "validation failed", nil, err.Error())
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
 	userResponse, err := uh.service.UpdatePicture(input, user.ID)
@@ -130,7 +130,7 @@ func (uh *userHandler) ChangePassword(c echo.Context) error {
 	}
 
 	if err := uh.validate.Struct(&input); err != nil {
-		return response.NewResponseFailed(c, http.StatusBadGateway, "failed", "validation failed", nil, err.Error())
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
 	claims := middlewares.DecodeTokenClaims(c)
@@ -150,7 +150,7 @@ func (uh *userHandler) ChangeAddress(c echo.Context) error {
 	}
 
 	if err := uh.validate.Struct(&input); err != nil {
-		return response.NewResponseFailed(c, http.StatusBadGateway, "failed", "validation failed", nil, err.Error())
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
 	claims := middlewares.DecodeTokenClaims(c)
@@ -190,7 +190,7 @@ func (uh *userHandler) Update(c echo.Context) error {
 	}
 
 	if err := uh.validate.Struct(&input); err != nil {
-		return response.NewResponseFailed(c, http.StatusBadGateway, "failed", "validation failed", nil, err.Error())
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
 	isExist, err := uh.service.GetByEmail(input.Email)
@@ -230,7 +230,7 @@ func (uh *userHandler) UpdateByAdmin(c echo.Context) error {
 	}
 
 	if err := uh.validate.Struct(&input); err != nil {
-		return response.NewResponseFailed(c, http.StatusBadGateway, "failed", "validation failed", nil, err.Error())
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
 	isExist, err := uh.service.GetByEmail(input.Email)

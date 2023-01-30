@@ -19,7 +19,9 @@ type Discussion struct {
 	UserID             string                `json:"user_id"`
 	User               User                  `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Comments           []Comment             `json:"comments" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	IsFound            bool                  `json:"is_found"`
+	Status             constant.StatusEnum   `json:"status"`
+	Privacy            constant.PrivacyEnum  `json:"privacy"`
+	View               int                   `json:"view"`
 	CreatedAt          time.Time             `json:"created_at"`
 	UpdatedAt          time.Time             `json:"updated_at"`
 	DeletedAt          gorm.DeletedAt        `json:"deleted_at" gorm:"index"`

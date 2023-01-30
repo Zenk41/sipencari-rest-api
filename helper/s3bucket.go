@@ -37,7 +37,7 @@ func UploadToS3(c echo.Context, folder string, filename string, src multipart.Fi
 	return result.Location, nil
 }
 
-func MultipleUploadS3(c echo.Context, files []*multipart.FileHeader) ([]string, error) {
+func MultipleUploadS3(c echo.Context, files []*multipart.FileHeader, path string) ([]string, error) {
 
 	SECRET_KEY := util.GetEnv("AWS_S3_BUCKET_SECRET_KEY")
 	KEY_ID := util.GetEnv("AWS_S3_BUCKET_KEY_ID")
@@ -60,14 +60,14 @@ func MultipleUploadS3(c echo.Context, files []*multipart.FileHeader) ([]string, 
 			return urlImages, err
 		}
 
-		fileName := time.Now().String()
+		fileName := time.Now().String() + ".png"
 
 		s3Session := session.New(configS3)
 		uploader := s3manager.NewUploader(s3Session)
 
 		result, err := uploader.Upload(&s3manager.UploadInput{
 			Bucket: aws.String(BUCKET_NAME),
-			Key:    aws.String("/discussion" + fileName),
+			Key:    aws.String(path + fileName),
 			Body:   src,
 		})
 

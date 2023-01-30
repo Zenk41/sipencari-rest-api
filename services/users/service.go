@@ -119,28 +119,6 @@ func (us *userService) GetAll(Page int, Size int, SortBy, Search, SearchQ, Role 
 	return model, *response.UsersResponse(users), nil
 }
 
-// func (us *userService) GetAll(SortBy string, SearchBy string, Query string, Role string) ([]response.User, error) {
-// 	var role string
-// 	if Role == "" {
-// 		role = ""
-// 	} else if Role == constant.RoleAdmin.String() {
-// 		role = "role = " + constant.RoleAdmin.String()
-// 	} else if Role == constant.RoleSuperadmin.String() {
-// 		role = "role = " + constant.RoleSuperadmin.String()
-// 	} else if Role == constant.RoleUser.String() {
-// 		role = "role = " + constant.RoleUser.String()
-// 	}
-
-// 	users, err := us.repository.GetAll(SortBy, SearchBy, Query, role)
-
-// 	if err != nil {
-// 		return []response.User{}, err
-// 	}
-
-// 	return *response.UsersResponse(users), nil
-
-// }
-
 func (us *userService) GetByID(userID string) (response.User, error) {
 
 	user, err := us.repository.GetByID(userID)
@@ -166,7 +144,7 @@ func (us *userService) UpdateUser(payload payload.AccountPayload, userID string)
 	user.Name = payload.Name
 	user.Email = payload.Email
 
-	updatedUser, err := us.repository.Update(user, user.UserID)
+	updatedUser, err := us.repository.Update(user)
 	if err != nil {
 		return response.User{}, err
 	}
@@ -188,7 +166,7 @@ func (us *userService) UpdatePicture(payload payload.ChangePicture, userID strin
 	}
 	user.Picture = payload.Picture
 
-	updatedUser, err := us.repository.Update(user, user.UserID)
+	updatedUser, err := us.repository.Update(user)
 	if err != nil {
 		return response.User{}, err
 	}
@@ -202,7 +180,7 @@ func (us *userService) UpdateAddress(payload payload.ChangeAddress, userID strin
 	}
 	user.Address = payload.Address
 
-	updatedUser, err := us.repository.Update(user, user.UserID)
+	updatedUser, err := us.repository.Update(user)
 	if err != nil {
 		return response.User{}, err
 	}
@@ -225,7 +203,7 @@ func (us *userService) ChangePassword(payload payload.ChangePasswordPayload, use
 		return response.User{}, err
 	}
 
-	updatedUser, err := us.repository.Update(user, userID)
+	updatedUser, err := us.repository.Update(user)
 
 	if err != nil {
 		return response.User{}, err
