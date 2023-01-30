@@ -15,23 +15,33 @@ tags:
     description: Endpoint for Authentication
   - name: User - Profile
     description: Endpoint for Profile
-  - name: User - Reset Password
-    description: Endpoint for Reset Password
+  # - name: User - Reset Password
+  #   description: Endpoint for Reset Password
   - name: User - Setting
     description: Endpoint for Setting
-  - name: User - Missing Post
-    description: Endpoint for Missing Post
+  - name: User - Discussion Post
+    description: Endpoint for Discussion Post
+  - name: User - Discussion Like
+    description: Endpoint for Discussion Like
+  - name: User - Discussion Picture
+    description: Endpoint for Discussion Picture
+  - name: User - Discussion Location
+    description: Endpoint for Discussion Location
   - name: User - Comment
-    description: Endpoint for Comment Missing Post
-  - name: User - Like Missing Post
-    description: Endpoint for Liking Missing Post
+    description: Endpoint for Comment Discussion Post
   - name: User - Like Comment
     description: Endpoint for Liking Comment
-  - name: Admin - Missing Post
-    description: Manage Missing Post(for admin & super admin calls only)
+  - name: User - Comment Picture
+    description: Endpoint for Comment Picture
+  - name: User - Comment Reaction
+    description: Endpoint for Comment Reaction
+  - name: User - Feedback
+    description: Endpoint for Comment Reaction
+  - name: Admin - Discussion Post
+    description: Manage Discussion Post(for admin & super admin calls only)
   - name: Admin - Comment
     description: Manage Comment(for admin & super admin calls only)
-  - name: Admin - Like Missing
+  - name: Admin - Like Discussion
     description: Like & Unliking User Comment(for admin & super admin calls only)
   - name: Admin - Like Comment
     description: Like & Unliking User Comment(for admin & super admin calls only)
@@ -112,17 +122,14 @@ paths:
   #     responses:
   #       "200":
   #         description: OK
-
   # /auth/refresh-token:
   #   post:
   #     security:
   #       - BearerAuth: []
   #       - RefreshAuth: []
-
   #     summary: Refreshing Access
   #     tags:
   #       - "Authentication"
-
   #     responses:
   #       "200":
   #         description: OK
@@ -246,7 +253,7 @@ paths:
               required:
                 - address
               properties:
-                picture:
+                address:
                   type: string
                   example: jl tugu
       responses:
@@ -254,12 +261,12 @@ paths:
           description: OK
 
   # User Post
-  /missing-posts/my-post:
+  /discussions/my-post:
     get:
       security:
         - BearerAuth: []
       tags:
-        - "User - Missing Post"
+        - "User - Discussion Post"
       responses:
         "200":
           description: OK
@@ -267,27 +274,141 @@ paths:
       security:
         - BearerAuth: []
       tags:
-        - "User - Missing Post"
+        - "User - Discussion Post"
       responses:
         "200":
           description: OK
 
-  /missing-posts:
-    post:
-      security:
-        - BearerAuth: []
-      tags:
-        - "User - Missing Post"
-      responses:
-        "200":
-          description: OK
-
-  /missing-posts/{missing-post-id}:
+  /discussions:
     get:
       security:
         - BearerAuth: []
       tags:
-        - "User - Missing Post"
+        - "User - Discussion Post"
+      parameters:
+        - in: query
+          name: size
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: sort
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: search
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: search-q
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: status
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: privacy
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: status OK
+
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Post"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - category
+                - content
+                - lat
+                - lng
+                - status
+                - privacy
+              properties:
+                title:
+                  type: string
+                  example: Kehilangan Helm di jalan setiabudi
+                category:
+                  type: string
+                  example: Goods
+                content:
+                  type: string
+                  example: telah terjadi kehilangan helm pada hari sekian ditempat
+                discussion_pictures:
+                  type: array
+                  items:
+                    format: binary
+                    type: string
+                lat:
+                  type: string
+                  example: "1,65"
+                lng:
+                  type: string
+                  example: "1,65"
+                status:
+                  type: string
+                  example: NotFound
+                privacy:
+                  type: string
+                  example: Public
+
+      responses:
+        "200":
+          description: OK
+
+  # /user/{user_id}/discussions:
+  #   get:
+  #     security:
+  #       - BearerAuth: []
+  #     tags:
+  #       - "User - Discussion Post"
+  #     parameters:
+  #       - in: path
+  #         name: user_id
+  #         schema:
+  #           type: string
+  #         required: true
+  #       - in: query
+  #         name: privacy
+  #         schema:
+  #           type: string
+  #         required: false
+  #     responses:
+  #       200:
+  #         description: status OK
+
+  /discussions/{discussion_id}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Post"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
       responses:
         "200":
           description: OK
@@ -295,7 +416,49 @@ paths:
       security:
         - BearerAuth: []
       tags:
-        - "User - Missing Post"
+        - "User - Discussion Post"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - category
+                - content
+                - lat
+                - lng
+                - status
+                - privacy
+              properties:
+                title:
+                  type: string
+                  example: Kehilangan Helm di jalan setiabudi
+                category:
+                  type: string
+                  example: Goods
+                content:
+                  type: string
+                  example: telah terjadi kehilangan helm pada hari sekian ditempat
+                lat:
+                  type: string
+                  example: "-1.65"
+                lng:
+                  type: string
+                  example: "1.65"
+                status:
+                  type: string
+                  example: Found
+                privacy:
+                  type: string
+                  example: Private
       responses:
         "200":
           description: OK
@@ -303,27 +466,365 @@ paths:
       security:
         - BearerAuth: []
       tags:
-        - "User - Missing Post"
+        - "User - Discussion Post"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
       responses:
         "200":
           description: OK
 
-  # User Comment Missing Post
-  /missing-posts/{missing-post-id}/comments:
+  /user/{user_id}/discussions:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Post"
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the user to get the spesific discussion
+        - in: query
+          name: privacy
+          schema:
+            type: string
+          required: false
+      responses:
+        "200":
+          description: OK
+
+  # User Like Discussion Post
+  /discussions/{discussion_id}/likes:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Like"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      responses:
+        "200":
+          description: OK
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Like"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      responses:
+        "200":
+          description: OK
+  /discussions/{discussion_id}/likes/user:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Like"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      responses:
+        "200":
+          description: OK
+
+  # User Picture Discussion Post
+  /discussions/{discussion_id}/pictures:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Picture"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      responses:
+        "200":
+          description: OK
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Picture"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                discussion_pictures:
+                  type: array
+                  items:
+                    format: binary
+                    type: string
+      responses:
+        "200":
+          description: OK
+  /discussions/pictures/{picture_id}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Picture"
+      parameters:
+        - in: path
+          name: picture_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      responses:
+        "200":
+          description: OK
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Picture"
+      parameters:
+        - in: path
+          name: picture_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      responses:
+        "200":
+          description: OK
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Discussion Picture"
+      parameters:
+        - in: path
+          name: picture_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - "url"
+              properties:
+                url:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+
+  # User Location Discussion Post
+  /discussions/{discussion_id}/location:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Discussion Location
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      responses:
+        "200":
+          description: OK
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Discussion Location
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - lat
+                - lng
+              properties:
+                lat:
+                  type: string
+                  example: -6.378263
+                lng:
+                  type: string
+                  example: 106.974252
+      responses:
+        "200":
+          description: OK
+  /locations:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Discussion Location
+      responses:
+        "200":
+          description: OK
+  /locations/{location_id}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Discussion Location
+      parameters:
+        - in: path
+          name: location_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the location to get the spesific location
+      responses:
+        "200":
+          description: OK
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Discussion Location
+      parameters:
+        - in: path
+          name: location_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the location to get the spesific location
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - lat
+                - lng
+              properties:
+                lat:
+                  type: string
+                  example: -6.378263
+                lng:
+                  type: string
+                  example: 106.974252
+      responses:
+        "200":
+          description: OK
+
+  # Comment
+  /discussions/{discussion_id}/comments:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Comment"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      responses:
+        "200":
+          description: OK
     post:
       security:
         - BearerAuth: []
       tags:
         - "User - Comment"
+      parameters:
+        - in: path
+          name: discussion_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  example: Saya pernah melihat di sekitar jl bambu
+                comment_pictures:
+                  type: array
+                  items:
+                    format: binary
+                    type: string
       responses:
         "200":
           description: OK
-  /missing-posts/{missing-post-id}/comments/{comment_id}:
+  /comments/{comment_id}:
     put:
       security:
         - BearerAuth: []
       tags:
         - "User - Comment"
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  example: Saya pernah melihat di sekitar jl bambu
       responses:
         "200":
           description: OK
@@ -332,31 +833,372 @@ paths:
         - BearerAuth: []
       tags:
         - "User - Comment"
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
       responses:
         "200":
           description: OK
 
-  # User Like Missing Post
-  /missing-posts/{missing-post-id}/likes:
-    post:
+    get:
       security:
         - BearerAuth: []
       tags:
-        - "User - Like Missing Post"
+        - "User - Comment"
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
       responses:
         "200":
           description: OK
 
-  # User Like Comment
-  /missing-posts/{missing-post-id}/comments/{comment-id}/likes:
+  # Like Comment
+  /comments/{comment_id}/likes:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Like Comment"
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
+      responses:
+        "200":
+          description: OK
+
     post:
       security:
         - BearerAuth: []
       tags:
         - "User - Like Comment"
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
       responses:
         "200":
           description: OK
+  /comments/{comment_id}/likes/{user_id}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Like Comment"
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
+        - in: path
+          name: user_id
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: OK
+
+  # Comment Picture
+  /comments/{comment_id}/pictures:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Comment Picture"
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
+      responses:
+        "200":
+          description: OK
+
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Comment Picture"
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                comment_pictures:
+                  type: array
+                  items:
+                    format: binary
+                    type: string
+      responses:
+        "200":
+          description: OK
+
+  /comments/pictures/{picture_id}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Comment Picture"
+      parameters:
+        - in: path
+          name: picture_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
+      responses:
+        "200":
+          description: OK
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Comment Picture"
+      parameters:
+        - in: path
+          name: picture_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      responses:
+        "200":
+          description: OK
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - "User - Comment Picture"
+      parameters:
+        - in: path
+          name: picture_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the discussion to get the spesific discussion
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - "url"
+              properties:
+                url:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+
+  # Comment Reaction
+  /comments/{comment_id}/reactions:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Comment Reaction
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - helpful
+              properties:
+                helpful:
+                  type: string
+                  example: Yes
+      responses:
+        "200":
+          description: OK
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Comment Reaction
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
+      responses:
+        "200":
+          description: OK
+  /comments/{comment_id}/reactions/{user_id}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Comment Reaction
+      parameters:
+        - in: path
+          name: comment_id
+          schema:
+            type: string
+          required: true
+          description: Numeric ID of the comment to get the spesific comment
+        - in: path
+          name: user_id
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: OK
+
+  # Feedback
+  /feedbacks:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Feedback
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - reaction
+                - review
+              properties:
+                reaction:
+                  type: string
+                  example: Sangat membantu
+                review:
+                  type: string
+                  example: Butuh peningkatan lebih baik
+      responses:
+        "200":
+          description: OK
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Feedback
+      parameters:
+        - in: query
+          name: size
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: sort
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: search
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: search-q
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: status OK
+  /feedbacks/{feedback_id}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Feedback
+      parameters:
+        - in: path
+          name: feedback_id
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: status OK
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Feedback
+      parameters:
+        - in: path
+          name: feedback_id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - reaction
+                - review
+              properties:
+                reaction:
+                  type: string
+                  example: sangat buruk
+                review:
+                  type: string
+                  example: Butuh peningkatan lebih bburuk
+      responses:
+        200:
+          description: status OK
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - User - Feedback
+      parameters:
+        - in: path
+          name: feedback_id
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: status OK
 
   # deffault
   # /:
@@ -372,8 +1214,8 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: JWT Token Required to access this endpoint
-    RefreshAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: Refresh Token required to access this endpoint
+    # RefreshAuth:
+    #   type: http
+    #   scheme: bearer
+    #   bearerFormat: JWT
+    #   description: Refresh Token required to access this endpoint

@@ -1,15 +1,19 @@
 package users
 
 import (
-	"github.com/Zenk41/sipencari-rest-api/models"
+	"time"
 
+	"github.com/Zenk41/sipencari-rest-api/models"
 )
 
 type User struct {
-	UserID  string `json:"user_id"`
-	Name    string `json:"name"`
-	Email   string `json:"email"`
-	Picture string `json:"picture"`
+	UserID    string    `json:"user_id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Picture   string    `json:"picture"`
+	Address   string    `json:"address"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type Login struct {
@@ -18,10 +22,13 @@ type Login struct {
 
 func UserResponse(user models.User) *User {
 	return &User{
-		UserID:  user.UserID,
-		Name:    user.Name,
-		Email:   user.Email,
-		Picture: user.Picture,
+		UserID:    user.UserID,
+		Name:      user.Name,
+		Email:     user.Email,
+		Picture:   user.Picture,
+		Address:   user.Address,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}
 }
 
@@ -29,10 +36,13 @@ func UsersResponse(users []models.User) *[]User {
 	var usersResponse []User
 	for _, user := range users {
 		response := User{
-			UserID:  user.UserID,
-			Name:    user.Name,
-			Email:   user.Email,
-			Picture: user.Picture,
+			UserID:    user.UserID,
+			Name:      user.Name,
+			Email:     user.Email,
+			Picture:   user.Picture,
+			Address:   user.Address,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
 		}
 		usersResponse = append(usersResponse, response)
 	}

@@ -17,7 +17,7 @@ type UserRepository interface {
 	GetAll(Page int, Size int, SortBy, Search, SearchQ, Role, RoleQ string) (*gorm.DB, []models.User, error)
 	GetByID(UserID string) (models.User, error)
 	GetByEmail(UserEmail string) (models.User, error)
-	Update(User models.User, userID string) (models.User, error)
+	Update(User models.User) (models.User, error)
 	Delete(UserID string) (bool, error)
 	CheckDuplicate(Email string) (bool, error)
 }
@@ -38,17 +38,17 @@ func (ur *userRepository) GetAll(Page int, Size int, SortBy, Search, SearchQ, Ro
 	var rec []models.User
 	var model *gorm.DB
 	if SortBy == "" && SearchQ == "" && RoleQ == "" {
-		model = ur.conn.Model(&rec)
+		model = ur.conn.Offset(Page).Limit(Size).Model(&rec)
 	} else if SortBy != "" && SearchQ == "" && RoleQ == "" {
-		model = ur.conn.Model(&rec).Order(SortBy)
+		model = ur.conn.Offset(Page).Limit(Size).Model(&rec).Order(SortBy)
 	} else if SortBy == "" && SearchQ != "" && RoleQ == "" {
-		model = ur.conn.Model(&rec).Where(SearchQ, Search)
+		model = ur.conn.Offset(Page).Limit(Size).Model(&rec).Where(SearchQ, Search)
 	} else if SortBy == "" && SearchQ == "" && RoleQ != "" {
-		model = ur.conn.Model(&rec).Where(RoleQ, Role)
+		model = ur.conn.Offset(Page).Limit(Size).Model(&rec).Where(RoleQ, Role)
 	} else if SortBy != "" && SearchQ != "" && RoleQ == "" {
-		model = ur.conn.Model(&rec).Order(SortBy).Where(SearchQ, Search)
+		model = ur.conn.Offset(Page).Limit(Size).Model(&rec).Order(SortBy).Where(SearchQ, Search)
 	} else {
-		model = ur.conn.Model(&rec).Order(SortBy).Where(RoleQ, Role).Where(SearchQ, Search).Where(RoleQ, Role)
+		model = ur.conn.Offset(Page).Limit(Size).Model(&rec).Order(SortBy).Where(RoleQ, Role).Where(SearchQ, Search)
 	}
 
 	if err := model.Find(&rec); err != nil {
@@ -70,7 +70,7 @@ func (ur *userRepository) GetByEmail(UserEmail string) (models.User, error) {
 	return rec, error
 }
 
-func (ur *userRepository) Update(User models.User, userID string) (models.User, error) {
+func (ur *userRepository) Update(User models.User) (models.User, error) {
 	err := ur.conn.Updates(User).Error
 	return User, err
 }
