@@ -49,13 +49,13 @@ func (uh *userHandler) Register(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "invalid request", nil, err.Error())
 	}
 
-	isExist, err := uh.service.GetByEmail(input.Email)
-	if isExist.UserID != "" {
-		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, err.Error())
-	}
-
 	if err := uh.validate.Struct(&input); err != nil {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
+	}
+
+	emailExist, _ := uh.service.GetByEmail(input.Email)
+	if emailExist {
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, "Email Already Exist")
 	}
 
 	userResponse, err := uh.service.Create(input, constant.RoleUser.String())
@@ -193,9 +193,9 @@ func (uh *userHandler) Update(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
-	isExist, err := uh.service.GetByEmail(input.Email)
-	if isExist.UserID != "" {
-		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, err.Error())
+	emailExist, _ := uh.service.GetByEmail(input.Email)
+	if emailExist {
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, "Email Already Exist")
 	}
 
 	res, err := uh.service.UpdateUser(input, claims.ID)
@@ -233,9 +233,9 @@ func (uh *userHandler) UpdateByAdmin(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
-	isExist, err := uh.service.GetByEmail(input.Email)
-	if isExist.UserID != "" {
-		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, err.Error())
+	emailExist, _ := uh.service.GetByEmail(input.Email)
+	if emailExist {
+		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, "Email Already Exist")
 	}
 
 	res, err := uh.service.UpdateUser(input, userID)

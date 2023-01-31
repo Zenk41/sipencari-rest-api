@@ -12,7 +12,7 @@ import (
 type User struct {
 	UserID    string            `json:"user_id" gorm:"size:225;primaryKey"`
 	Name      string            `json:"name" gorm:"size:100;"`
-	Email     string            `json:"email" gorm:"size:255;"`
+	Email     string            `json:"email" gorm:"size:255;unique"`
 	Password  string            `json:"password" gorm:"size:255;"`
 	Picture   string            `json:"picture" gorm:"size:255;"`
 	Role      constant.RoleEnum `json:"role" gorm:"size:10;"`

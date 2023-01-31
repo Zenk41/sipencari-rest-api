@@ -18,7 +18,7 @@ type UserService interface {
 	Login(payload payload.LoginPayload) (response.Login, error)
 	GetAll(Page int, Size int, SortBy, Search, SearchQ, Role string) (*gorm.DB, []response.User, error)
 	GetByID(userID string) (response.User, error)
-	GetByEmail(userEmail string) (response.User, error)
+	GetByEmail(userEmail string) (bool, error)
 	UpdateUser(payload payload.AccountPayload, userID string) (response.User, error)
 	Delete(userID string) (bool, error)
 	UpdatePicture(payload payload.ChangePicture, userID string) (response.User, error)
@@ -128,12 +128,12 @@ func (us *userService) GetByID(userID string) (response.User, error) {
 	return *response.UserResponse(user), nil
 }
 
-func (us *userService) GetByEmail(userEmail string) (response.User, error) {
+func (us *userService) GetByEmail(userEmail string) (bool, error) {
 	user, err := us.repository.GetByEmail(userEmail)
-	if err != nil {
-		return response.User{}, err
+	if err != nil || user.UserID == "" {
+		return false, err
 	}
-	return *response.UserResponse(user), nil
+	return true, nil
 }
 
 func (us *userService) UpdateUser(payload payload.AccountPayload, userID string) (response.User, error) {
