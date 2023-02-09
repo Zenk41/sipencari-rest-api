@@ -26,6 +26,7 @@ type DiscussionHandler interface {
 	GetByUserID(e echo.Context) error
 	Update(c echo.Context) error
 	Delete(c echo.Context) error
+	GetMine(c echo.Context) error
 }
 
 type discussionHandler struct {
@@ -74,6 +75,16 @@ func (dh *discussionHandler) CreateDiscussion(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "picture has changed", dis)
+}
+
+func (dh *discussionHandler) GetMine(c echo.Context) error {
+	claim := middlewares.DecodeTokenClaims(c)
+
+	res, err := dh.service.GetMyDiscussion(claim.ID)
+	if err != nil {
+		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
+	}
+	return response.NewResponseSuccess(c, http.StatusOK, "success", "discussion retreived by user", res)
 }
 
 func (dh *discussionHandler) GetAll(c echo.Context) error {
@@ -160,7 +171,7 @@ func (dh *discussionHandler) Delete(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
 	if discussion.UserID != claims.ID {
-		if claims.Role != constant.RoleAdmin.String() || claims.Role != constant.RoleSuperadmin.String(){
+		if claims.Role != constant.RoleAdmin.String() || claims.Role != constant.RoleSuperadmin.String() {
 			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		} else {
 			result, err = dh.service.Delete(discussionID)

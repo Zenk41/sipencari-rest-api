@@ -1,7 +1,6 @@
 package discussions
 
 import (
-
 	"strings"
 
 	"github.com/Zenk41/sipencari-rest-api/constant"
@@ -18,6 +17,7 @@ type DiscussionService interface {
 	GetAll(Page int, Size int, SortBy, Status, Privacy, Search, SearchQ string) (*gorm.DB, []response.Discussion, error)
 	GetByID(discussionID string) (response.Discussion, error)
 	GetByUserID(userID string, privacy string) ([]response.Discussion, error)
+	GetMyDiscussion(userID string) ([]response.Discussion, error)
 	Update(payload payload.UpdateDiscussion, discussionID string, locationName string) (response.Discussion, error)
 	Delete(discussionID string) (bool, error)
 }
@@ -52,6 +52,17 @@ func (ds *discussionService) Create(payload payload.CreateDiscussion, UserID str
 	}
 
 	return *response.DiscussionResponse(discussion), err
+}
+
+func (ds *discussionService) GetMyDiscussion(userID string) ([]response.Discussion, error) {
+	var discussions []models.Discussion
+	var err error
+
+	discussions, err = ds.repository.GetByUserID(userID)
+	if err != nil {
+		return []response.Discussion{}, err
+	}
+	return *response.DiscussionsResponse(discussions), nil
 }
 
 func (ds *discussionService) GetAll(Page int, Size int, SortBy, Status, Privacy, Search, SearchQ string) (*gorm.DB, []response.Discussion, error) {
