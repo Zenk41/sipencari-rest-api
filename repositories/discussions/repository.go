@@ -17,6 +17,7 @@ type DiscussionRepository interface {
 	GetAll(Page int, Size int, SortBy, Search, SearchQ, Privacy, Status string) (*gorm.DB, []models.Discussion, error)
 	GetByID(DiscussionID string) (models.Discussion, error)
 	GetByUserID(UserID string) ([]models.Discussion, error)
+	GetAllWithoutStatus(Page int, Size int, SortBy, Search, SearchQ, Privacy string) (*gorm.DB, []models.Discussion, error)
 	GetByUserIDWithPrivacy(UserID string, Privacy string) ([]models.Discussion, error)
 	Update(Discussion models.Discussion) (models.Discussion, error)
 	Delete(DiscussionID string) (bool, error)
@@ -94,6 +95,42 @@ func (dr *discussionRepository) GetAll(Page int, Size int, SortBy, Search, Searc
 
 	return model, rec, nil
 }
+
+func (dr *discussionRepository) GetAllWithoutStatus(Page int, Size int, SortBy, Search, SearchQ, Privacy string) (*gorm.DB, []models.Discussion, error) {
+	var rec []models.Discussion
+	var model *gorm.DB
+
+	if SearchQ != "" {
+		model = dr.conn.Model(&rec).Order(SortBy).Where("privacy = ?", Privacy).Where(SearchQ, Search)
+		dr.conn.Offset(Page).Limit(Size).Order(SortBy).Where("privacy = ?", Privacy).Where(SearchQ, Search).Preload("User").
+			Preload("DiscussionPictures").
+			Preload("DiscussionLocation").
+			Preload("Comments").
+			Preload("Comments.User").
+			Preload("Comments.CommentLikes").
+			Preload("Comments.CommentLikes.User").
+			Preload("Comments.CommentReactions").
+			Preload("Comments.CommentReactions.User").
+			Preload("DiscussionLikes").
+			Preload("DiscussionLikes.User").Find(&rec)
+	} else {
+		model = dr.conn.Model(&rec).Order(SortBy).Where("privacy = ?", Privacy)
+		dr.conn.Order(SortBy).Offset(Page).Limit(Size).Where("privacy = ?", Privacy).Preload("User").
+			Preload("DiscussionPictures").
+			Preload("DiscussionLocation").
+			Preload("Comments").
+			Preload("Comments.User").
+			Preload("Comments.CommentLikes").
+			Preload("Comments.CommentLikes.User").
+			Preload("Comments.CommentReactions").
+			Preload("Comments.CommentReactions.User").
+			Preload("DiscussionLikes").
+			Preload("DiscussionLikes.User").Find(&rec)
+	}
+
+	return model, rec, nil
+}
+
 func (dr *discussionRepository) GetByID(DiscussionID string) (models.Discussion, error) {
 	var rec models.Discussion
 	error := dr.conn.

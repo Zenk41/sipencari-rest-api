@@ -69,6 +69,9 @@ func (ds *discussionService) GetAll(Page int, Size int, SortBy, Status, Privacy,
 	var sort string
 	var search string
 	var searchQ string
+	var model *gorm.DB
+	var discussions []models.Discussion
+	var err error
 
 	if SearchQ == "" {
 		searchQ = ""
@@ -86,7 +89,12 @@ func (ds *discussionService) GetAll(Page int, Size int, SortBy, Status, Privacy,
 	} else {
 		sort = ""
 	}
-	model, discussions, err := ds.repository.GetAll(Page, Size, sort, search, searchQ, Privacy, Status)
+	if Status != "" {
+		model, discussions, err = ds.repository.GetAll(Page, Size, sort, search, searchQ, Privacy, Status)
+	} else {
+		model, discussions, err = ds.repository.GetAllWithoutStatus(Page, Size, sort, search, searchQ, Privacy)
+	}
+
 	if err != nil {
 		return model, []response.Discussion{}, err
 	}
