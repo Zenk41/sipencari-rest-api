@@ -42,6 +42,7 @@ func RouteRegister(e *echo.Echo) {
 	Discussion := v1.Group("/discussions", middleware.JWTWithConfig(initialize.AuthHandler))
 	Discussion.POST("", initialize.DisHandler.CreateDiscussion)
 	Discussion.GET("", initialize.DisHandler.GetAll)
+	Discussion.GET("/mine", initialize.DisHandler.GetMine)
 	Discussion.GET("/:discussion_id", initialize.DisHandler.GetByID)
 	Discussion.PUT("/:discussion_id", initialize.DisHandler.Update)
 	Discussion.DELETE("/:discussion_id", initialize.DisHandler.Delete)
