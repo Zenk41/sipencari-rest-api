@@ -261,16 +261,8 @@ paths:
           description: OK
 
   # User Post
-  /discussions/my-post:
+  /discussions/mine:
     get:
-      security:
-        - BearerAuth: []
-      tags:
-        - "User - Discussion Post"
-      responses:
-        "200":
-          description: OK
-    post:
       security:
         - BearerAuth: []
       tags:

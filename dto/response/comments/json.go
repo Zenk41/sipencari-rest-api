@@ -21,6 +21,9 @@ type Comment struct {
 	ParrentComment  string                      `json:"parrent_comment"`
 	UserID          string                      `json:"user_id"`
 	User            resUser.User                `json:"user"`
+	IsLike          *bool                       `json:"is_like"`
+	IsHelpfulYes    *bool                       `json:"is_helpful_yes"`
+	IsHelpfulNo     *bool                       `json:"is_helpful_no"`
 	LikeTotal       *int                        `json:"like_total"`
 	TotalHelpfulYes *int                        `json:"total_helpful_yes"`
 	TotalHelpfulNo  *int                        `json:"total_helpful_no"`
@@ -29,17 +32,25 @@ type Comment struct {
 	UpdatedAt       time.Time                   `json:"updated_at"`
 }
 
-func CommentResponse(comment models.Comment) *Comment {
+func CommentResponse(comment models.Comment, userID string) *Comment {
 	var ReactionTotalC int = 0
 	var LikeTotalC int = 0
 	var HelpfulNo int = 0
 	var HelpfulYes int = 0
+	var ICommentLike bool
+	var CommentReactionYes bool
+	var CommentReactionNo bool
 
 	// Like in Comment
 	var likesC []resLikesC.CommentLike
 	likesCData := comment.CommentLikes
 	for _, like := range likesCData {
 		LikeTotalC += 1
+		if userID == like.UserID {
+			ICommentLike = true
+		} else {
+			ICommentLike = false
+		}
 		likesC = append(likesC, resLikesC.CommentLike{
 			UserID: like.UserID,
 			User: resUser.User{
@@ -76,6 +87,16 @@ func CommentResponse(comment models.Comment) *Comment {
 		} else if reaction.Helpful.String() == constant.HelpfulYes.String() {
 			HelpfulYes += 1
 		}
+		if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulNo.String() {
+			CommentReactionNo = true
+			CommentReactionYes = false
+		} else if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulYes.String() {
+			CommentReactionNo = false
+			CommentReactionYes = true
+		} else {
+			CommentReactionNo = false
+			CommentReactionYes = false
+		}
 		reactionsC = append(reactionsC, resReactC.CommentReaction{
 			UserID: reaction.UserID,
 			User: resUser.User{
@@ -105,6 +126,9 @@ func CommentResponse(comment models.Comment) *Comment {
 			Picture: comment.User.Picture,
 			Email:   comment.User.Email,
 		},
+		IsLike:          &ICommentLike,
+		IsHelpfulYes:    &CommentReactionYes,
+		IsHelpfulNo:     &CommentReactionNo,
 		LikeTotal:       &LikeTotalC,
 		TotalReaction:   &ReactionTotalC,
 		TotalHelpfulYes: &HelpfulYes,
@@ -114,7 +138,7 @@ func CommentResponse(comment models.Comment) *Comment {
 	}
 }
 
-func CommentsResponse(comments []models.Comment) *[]Comment {
+func CommentsResponse(comments []models.Comment, userID string) *[]Comment {
 	// Comment
 	var commentsResponse []Comment
 	for _, comment := range comments {
@@ -122,12 +146,20 @@ func CommentsResponse(comments []models.Comment) *[]Comment {
 		var LikeTotalC int = 0
 		var HelpfulNo int = 0
 		var HelpfulYes int = 0
+		var ICommentLike bool
+		var CommentReactionYes bool
+		var CommentReactionNo bool
 
 		// Like in Comment
 		var likesC []resLikesC.CommentLike
 		likesCData := comment.CommentLikes
 		for _, like := range likesCData {
 			LikeTotalC += 1
+			if userID == like.UserID {
+				ICommentLike = true
+			} else {
+				ICommentLike = false
+			}
 			likesC = append(likesC, resLikesC.CommentLike{
 				UserID: like.UserID,
 				User: resUser.User{
@@ -164,6 +196,16 @@ func CommentsResponse(comments []models.Comment) *[]Comment {
 			} else if reaction.Helpful.String() == constant.HelpfulYes.String() {
 				HelpfulYes += 1
 			}
+			if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulNo.String() {
+				CommentReactionNo = true
+				CommentReactionYes = false
+			} else if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulYes.String() {
+				CommentReactionNo = false
+				CommentReactionYes = true
+			} else {
+				CommentReactionNo = false
+				CommentReactionYes = false
+			}
 			reactionsC = append(reactionsC, resReactC.CommentReaction{
 				UserID: reaction.UserID,
 				User: resUser.User{
@@ -192,6 +234,9 @@ func CommentsResponse(comments []models.Comment) *[]Comment {
 				Picture: comment.User.Picture,
 				Email:   comment.User.Email,
 			},
+			IsLike:          &ICommentLike,
+			IsHelpfulYes:    &CommentReactionYes,
+			IsHelpfulNo:     &CommentReactionNo,
 			LikeTotal:       &LikeTotalC,
 			TotalReaction:   &ReactionTotalC,
 			TotalHelpfulYes: &HelpfulYes,

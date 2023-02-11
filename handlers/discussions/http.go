@@ -70,24 +70,27 @@ func (dh *discussionHandler) CreateDiscussion(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
 
-	dis, err := dh.service.Create(input, user.ID, urlPictures, locationName.FormatedAddress)
+	dis, err := dh.service.Create(input, user.ID, urlPictures, locationName.FormatedAddress,user.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
+
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "picture has changed", dis)
 }
 
 func (dh *discussionHandler) GetMine(c echo.Context) error {
 	claim := middlewares.DecodeTokenClaims(c)
 
-	res, err := dh.service.GetMyDiscussion(claim.ID)
+	res, err := dh.service.GetMyDiscussion(claim.ID, claim.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
-	return response.NewResponseSuccess(c, http.StatusOK, "success", "discussion retreived by user", res)
+
+	return response.NewResponseSuccess(c, http.StatusOK, "success", "discussion retreived by user", &res)
 }
 
 func (dh *discussionHandler) GetAll(c echo.Context) error {
+	claims := middlewares.DecodeTokenClaims(c)
 	pg := paginate.New()
 	size, _ := strconv.Atoi(c.QueryParam("size"))
 	page, _ := strconv.Atoi(c.QueryParam("page"))
@@ -97,30 +100,35 @@ func (dh *discussionHandler) GetAll(c echo.Context) error {
 	status := c.QueryParam("status")
 	privacy := c.QueryParam("privacy")
 
-	model, res, err := dh.service.GetAll(page, size, sortBy, status, privacy, search, searchQ)
+	model, res, err := dh.service.GetAll(page, size, sortBy, status, privacy, search, searchQ, claims.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "get users failed", nil, err.Error())
 	}
+
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "All discussion retieved", pg.Response(model, c.Request(), &res))
 }
 
 func (dh *discussionHandler) GetByID(c echo.Context) error {
+	claims := middlewares.DecodeTokenClaims(c)
 	discussionID := c.Param("discussion_id")
-	res, err := dh.service.GetByID(discussionID)
+	res, err := dh.service.GetByID(discussionID, claims.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
+
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "discussion retieved", res)
 }
 
 func (dh *discussionHandler) GetByUserID(c echo.Context) error {
+	claims := middlewares.DecodeTokenClaims(c)
 	userID := c.Param("user_id")
 	privacy := c.QueryParam("privacy")
 
-	res, err := dh.service.GetByUserID(userID, privacy)
+	res, err := dh.service.GetByUserID(userID, privacy, claims.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
+
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "discussion retreived by user", res)
 }
 
@@ -138,7 +146,7 @@ func (dh *discussionHandler) Update(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
-	discussion, err := dh.service.GetByID(discussionID)
+	discussion, err := dh.service.GetByID(discussionID, claims.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
@@ -148,11 +156,11 @@ func (dh *discussionHandler) Update(c echo.Context) error {
 		if claims.Role != constant.RoleAdmin.String() || claims.Role != constant.RoleAdmin.String() {
 			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		} else {
-			res, err = dh.service.Update(input, discussionID, locationName.FormatedAddress)
+			res, err = dh.service.Update(input, discussionID, locationName.FormatedAddress, claims.ID)
 		}
 		return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 	} else {
-		res, err = dh.service.Update(input, discussionID, locationName.FormatedAddress)
+		res, err = dh.service.Update(input, discussionID, locationName.FormatedAddress, claims.ID)
 	}
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
@@ -166,7 +174,7 @@ func (dh *discussionHandler) Delete(c echo.Context) error {
 	discussionID := c.Param("discussion_id")
 	var result bool
 
-	discussion, err := dh.service.GetByID(discussionID)
+	discussion, err := dh.service.GetByID(discussionID, claims.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
