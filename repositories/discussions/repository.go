@@ -162,7 +162,7 @@ func (dr *discussionRepository) GetByUserID(UserID string) ([]models.Discussion,
 		Preload("Comments.CommentReactions").
 		Preload("Comments.CommentReactions.User").
 		Preload("DiscussionLikes").
-		Preload("DiscussionLikes.User").
+		Preload("DiscussionLikes.User").Order("created_at desc").
 		Where("user_id = ?", UserID).Find(&rec).Error
 	return rec, error
 }

@@ -58,7 +58,7 @@ func (dlr disLikeRepository) DeleteLike(discussionID string, userID string) (boo
 		return false, err
 	}
 
-	if result := dlr.conn.Unscoped().Delete(&rec); result.RowsAffected == 0 {
+	if result := dlr.conn.Where("discussion_id=? AND user_id=?", discussionID, userID).Unscoped().Delete(&rec); result.RowsAffected == 0 {
 		return false, err
 	}
 	return true, nil

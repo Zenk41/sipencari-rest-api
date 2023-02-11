@@ -24,7 +24,7 @@ func NewComLikeRepository(conn *gorm.DB) ComLikeRepository {
 
 func (clr *comLikeRepository) GetAll(commentID string) ([]models.CommentLike, error) {
 	var rec []models.CommentLike
-	err := clr.conn.Preload("User").Preload("CommentPictures").Where("comment_id = ?", commentID).Find(&rec).Error
+	err := clr.conn.Preload("User").Where("comment_id = ?", commentID).Find(&rec).Error
 	return rec, err
 }
 
@@ -54,7 +54,7 @@ func (clr *comLikeRepository) DeleteLike(commentID string, userID string) (bool,
 		return false, err
 	}
 
-	if result := clr.conn.Unscoped().Delete(&rec); result.RowsAffected == 0 {
+	if result := clr.conn.Where("comment_id=? AND user_id=?", commentID, userID).Unscoped().Delete(&rec); result.RowsAffected == 0 {
 		return false, err
 	}
 	return true, nil

@@ -28,15 +28,18 @@ type Discussion struct {
 	Comments           []resCommentD.Comment       `json:"comments"`
 	Status             string                      `json:"status"`
 	Privacy            string                      `json:"privacy"`
+	Ilike              *bool                       `json:"i_like"`
 	LikeTotal          *int                        `json:"like_total"`
 	CommentTotal       *int                        `json:"comment_total"`
 	CreatedAt          time.Time                   `json:"created_at"`
 	UpdatedAt          time.Time                   `json:"updated_at"`
 }
 
-func DiscussionResponse(discussion models.Discussion) *Discussion {
+func DiscussionResponse(discussion models.Discussion, userID string) *Discussion {
 	var CommentTotalD int = 0
 	var LikeTotalD int = 0
+	var IDiscussionLike bool
+
 	// picture
 	var pictures []resPicD.DiscussionPicture
 	picturesData := discussion.DiscussionPictures
@@ -55,6 +58,11 @@ func DiscussionResponse(discussion models.Discussion) *Discussion {
 	likesData := discussion.DiscussionLikes
 	for _, like := range likesData {
 		LikeTotalD += 1
+		if userID == like.UserID {
+			IDiscussionLike = true
+		} else {
+			IDiscussionLike = false
+		}
 		likes = append(likes, resLikesD.DiscussionLike{
 			UserID: like.UserID,
 			User: resUser.User{
@@ -77,6 +85,9 @@ func DiscussionResponse(discussion models.Discussion) *Discussion {
 		var LikeTotalC int = 0
 		var HelpfulNo int = 0
 		var HelpfulYes int = 0
+		var ICommentLike bool
+		var CommentReactionYes bool
+		var CommentReactionNo bool
 		CommentTotalD += 1
 		// Picture in Comment
 		var picturesC []resComPic.CommentPicture
@@ -96,6 +107,11 @@ func DiscussionResponse(discussion models.Discussion) *Discussion {
 		likesCData := comment.CommentLikes
 		for _, like := range likesCData {
 			LikeTotalC += 1
+			if userID == like.UserID {
+				ICommentLike = true
+			} else {
+				ICommentLike = false
+			}
 			likesC = append(likesC, resComLike.CommentLike{
 				UserID: like.UserID,
 				User: resUser.User{
@@ -119,6 +135,16 @@ func DiscussionResponse(discussion models.Discussion) *Discussion {
 				HelpfulNo += 1
 			} else if reaction.Helpful.String() == constant.HelpfulYes.String() {
 				HelpfulYes += 1
+			}
+			if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulNo.String() {
+				CommentReactionNo = true
+				CommentReactionYes = false
+			} else if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulYes.String() {
+				CommentReactionNo = false
+				CommentReactionYes = true
+			} else {
+				CommentReactionNo = false
+				CommentReactionYes = false
 			}
 			reactionsC = append(reactionsC, resComReaction.CommentReaction{
 				UserID: reaction.UserID,
@@ -149,6 +175,9 @@ func DiscussionResponse(discussion models.Discussion) *Discussion {
 				Picture: comment.User.Picture,
 				Email:   comment.User.Email,
 			},
+			IsLike:          &ICommentLike,
+			IsHelpfulYes:    &CommentReactionYes,
+			IsHelpfulNo:     &CommentReactionNo,
 			LikeTotal:       &LikeTotalC,
 			TotalReaction:   &ReactionTotalC,
 			TotalHelpfulYes: &HelpfulYes,
@@ -180,6 +209,7 @@ func DiscussionResponse(discussion models.Discussion) *Discussion {
 			Picture: discussion.User.Picture,
 			Email:   discussion.User.Email,
 		},
+		Ilike:        &IDiscussionLike,
 		Comments:     comments,
 		Status:       string(discussion.Status),
 		Privacy:      string(discussion.Privacy),
@@ -190,11 +220,12 @@ func DiscussionResponse(discussion models.Discussion) *Discussion {
 	}
 }
 
-func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
+func DiscussionsResponse(discussions []models.Discussion, userID string) *[]Discussion {
 	var discussionsResponse []Discussion
 	for _, discussion := range discussions {
 		var CommentTotalD int = 0
 		var LikeTotalD int = 0
+		var IDiscussionLike bool
 
 		// picture
 		var pictures []resPicD.DiscussionPicture
@@ -214,6 +245,11 @@ func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
 		likesData := discussion.DiscussionLikes
 		for _, like := range likesData {
 			LikeTotalD += 1
+			if userID == like.UserID {
+				IDiscussionLike = true
+			} else {
+				IDiscussionLike = false
+			}
 			likes = append(likes, resLikesD.DiscussionLike{
 				UserID: like.UserID,
 				User: resUser.User{
@@ -236,6 +272,9 @@ func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
 			var LikeTotalC int = 0
 			var HelpfulNo int = 0
 			var HelpfulYes int = 0
+			var ICommentLike bool
+			var CommentReactionYes bool
+			var CommentReactionNo bool
 			CommentTotalD += 1
 			// Picture in Comment
 			var picturesC []resComPic.CommentPicture
@@ -255,6 +294,11 @@ func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
 			likesCData := comment.CommentLikes
 			for _, like := range likesCData {
 				LikeTotalC += 1
+				if userID == like.UserID {
+					ICommentLike = true
+				} else {
+					ICommentLike = false
+				}
 				likesC = append(likesC, resComLike.CommentLike{
 					UserID: like.UserID,
 					User: resUser.User{
@@ -278,6 +322,16 @@ func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
 					HelpfulNo += 1
 				} else if reaction.Helpful.String() == constant.HelpfulYes.String() {
 					HelpfulYes += 1
+				}
+				if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulNo.String() {
+					CommentReactionNo = true
+					CommentReactionYes = false
+				} else if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulYes.String() {
+					CommentReactionNo = false
+					CommentReactionYes = true
+				} else {
+					CommentReactionNo = false
+					CommentReactionYes = false
 				}
 				reactionsC = append(reactionsC, resComReaction.CommentReaction{
 					UserID: reaction.UserID,
@@ -308,6 +362,9 @@ func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
 					Picture: comment.User.Picture,
 					Email:   comment.User.Email,
 				},
+				IsLike:          &ICommentLike,
+				IsHelpfulYes:    &CommentReactionYes,
+				IsHelpfulNo:     &CommentReactionNo,
 				LikeTotal:       &LikeTotalC,
 				TotalReaction:   &ReactionTotalC,
 				TotalHelpfulYes: &HelpfulYes,
@@ -338,6 +395,7 @@ func DiscussionsResponse(discussions []models.Discussion) *[]Discussion {
 				Picture: discussion.User.Picture,
 				Email:   discussion.User.Email,
 			},
+			Ilike:        &IDiscussionLike,
 			Comments:     comments,
 			Status:       string(discussion.Status),
 			Privacy:      string(discussion.Privacy),

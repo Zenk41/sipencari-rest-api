@@ -9,10 +9,10 @@ import (
 )
 
 type CommentService interface {
-	Create(userID string, discussionID string, pictures []string, payload payload.Comment) (response.Comment, error)
-	Update(commentID string, payload payload.UpdateComment) (response.Comment, error)
-	GetByID(commentID string) (response.Comment, error)
-	GetAll(discussionID string) ([]response.Comment, error)
+	Create(userID string, discussionID string, pictures []string, payload payload.Comment, receiverID string) (response.Comment, error)
+	Update(commentID string, payload payload.UpdateComment, receiverID string) (response.Comment, error)
+	GetByID(commentID string, receiverID string) (response.Comment, error)
+	GetAll(discussionID string, receiverID string) ([]response.Comment, error)
 	Delete(commentID string) (bool, error)
 }
 
@@ -24,7 +24,7 @@ func NewCommentService(repository repository.CommentRepository) CommentService {
 	return &commentService{repository: repository}
 }
 
-func (cs *commentService) Create(userID string, discussionID string, pictures []string, payload payload.Comment) (response.Comment, error) {
+func (cs *commentService) Create(userID string, discussionID string, pictures []string, payload payload.Comment, receiverID string) (response.Comment, error) {
 	var Comment models.Comment
 	Comment.Message = payload.Message
 	Comment.ParrentComment = payload.ParrentComment
@@ -36,10 +36,10 @@ func (cs *commentService) Create(userID string, discussionID string, pictures []
 	if err != nil {
 		return response.Comment{}, err
 	}
-	return *response.CommentResponse(comment), err
+	return *response.CommentResponse(comment, receiverID), err
 
 }
-func (cs *commentService) Update(commentID string, payload payload.UpdateComment) (response.Comment, error) {
+func (cs *commentService) Update(commentID string, payload payload.UpdateComment, receiverID string) (response.Comment, error) {
 	comment, err := cs.repository.GetByID(commentID)
 	if err != nil {
 		return response.Comment{}, err
@@ -49,22 +49,22 @@ func (cs *commentService) Update(commentID string, payload payload.UpdateComment
 	if err != nil {
 		return response.Comment{}, err
 	}
-	return *response.CommentResponse(updatedComment), err
+	return *response.CommentResponse(updatedComment, receiverID), err
 }
 
-func (cs *commentService) GetByID(commentID string) (response.Comment, error) {
+func (cs *commentService) GetByID(commentID string, receiverID string) (response.Comment, error) {
 	comment, err := cs.repository.GetByID(commentID)
 	if err != nil {
 		return response.Comment{}, err
 	}
-	return *response.CommentResponse(comment), nil
+	return *response.CommentResponse(comment, receiverID), nil
 }
-func (cs *commentService) GetAll(discussionID string) ([]response.Comment, error) {
+func (cs *commentService) GetAll(discussionID string, receiverID string) ([]response.Comment, error) {
 	comments, err := cs.repository.GetAll(discussionID)
 	if err != nil {
 		return []response.Comment{}, err
 	}
-	return *response.CommentsResponse(comments), err
+	return *response.CommentsResponse(comments, receiverID), err
 }
 func (cs *commentService) Delete(commentID string) (bool, error) {
 

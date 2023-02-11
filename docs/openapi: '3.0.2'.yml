@@ -3,9 +3,9 @@ info:
   title: Sipencari API
   version: "1.0"
 servers:
-  - url: https://test.sipencari.com/api/v1
-    description: "Server for testing"
-  - url: https://prod.sipencari.com/api/v1
+  - url: https://dev-api.sipencari.com/api/v1
+    description: "Server for develoment"
+  - url: https://prod-api.sipencari.com/api/v1
     description: "Server Production"
   - url: http://localhost:8080/api/v1
 tags:
@@ -261,16 +261,8 @@ paths:
           description: OK
 
   # User Post
-  /discussions/my-post:
+  /discussions/mine:
     get:
-      security:
-        - BearerAuth: []
-      tags:
-        - "User - Discussion Post"
-      responses:
-        "200":
-          description: OK
-    post:
       security:
         - BearerAuth: []
       tags:

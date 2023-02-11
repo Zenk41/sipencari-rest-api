@@ -40,7 +40,7 @@ func (crr *comReactionRepository) Delete(commentID, userID string) (bool, error)
 	if err != nil {
 		return false, err
 	}
-	if result := crr.conn.Unscoped().Delete(&rec); result.RowsAffected == 0 {
+	if result := crr.conn.Where("comment_id=? AND user_id=?", commentID, userID).Unscoped().Delete(&rec); result.RowsAffected == 0 {
 		return false, err
 	}
 	return true, nil
@@ -51,6 +51,7 @@ func (crr *comReactionRepository) GetByID(commentID, userID string) (models.Comm
 	error := crr.conn.Preload("User").Where("comment_id = ? AND user_id = ?", commentID, userID).First(&rec).Error
 	return rec, error
 }
+
 func (crr *comReactionRepository) GetAll(commentID string) ([]models.CommentReaction, error) {
 	var rec []models.CommentReaction
 	err := crr.conn.Where("comment_id = ?", commentID).Preload("User").

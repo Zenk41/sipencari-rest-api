@@ -60,34 +60,40 @@ func (ch *commentHandler) Create(c echo.Context) error {
 			return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 		}
 	}
-	res, err := ch.service.Create(claim.ID, discussionID, urlPictures, input)
+	res, err := ch.service.Create(claim.ID, discussionID, urlPictures, input, claim.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
+
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "comment created", res)
 
 }
 
 func (ch *commentHandler) GetAll(c echo.Context) error {
+	claim := middlewares.DecodeTokenClaims(c)
 	discussionID := c.Param("discussion_id")
-	res, err := ch.service.GetAll(discussionID)
+	res, err := ch.service.GetAll(discussionID, claim.Id)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
+
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "all comment in discussion", res)
 }
 
 func (ch *commentHandler) GetByID(c echo.Context) error {
+	claim := middlewares.DecodeTokenClaims(c)
 	commentID := c.Param("comment_id")
 
-	res, err := ch.service.GetByID(commentID)
+	res, err := ch.service.GetByID(commentID, claim.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
+
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "get comment", res)
 }
 
 func (ch *commentHandler) Update(c echo.Context) error {
+	claim := middlewares.DecodeTokenClaims(c)
 	commentID := c.Param("comment_id")
 	var input payload.UpdateComment
 	if err := c.Bind(&input); err != nil {
@@ -96,10 +102,11 @@ func (ch *commentHandler) Update(c echo.Context) error {
 	if err := ch.validate.Struct(&input); err != nil {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
-	res, err := ch.service.Update(commentID, input)
+	res, err := ch.service.Update(commentID, input, claim.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
+
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "comment updated", res)
 }
 
@@ -108,7 +115,7 @@ func (ch *commentHandler) Delete(c echo.Context) error {
 	commentID := c.Param("comment_id")
 	var result bool
 
-	comment, err := ch.service.GetByID(commentID)
+	comment, err := ch.service.GetByID(commentID, claims.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}

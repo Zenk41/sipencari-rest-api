@@ -13,12 +13,12 @@ import (
 )
 
 type DiscussionService interface {
-	Create(payload payload.CreateDiscussion, UserID string, UrlPictures []string, locationName string) (response.Discussion, error)
-	GetAll(Page int, Size int, SortBy, Status, Privacy, Search, SearchQ string) (*gorm.DB, []response.Discussion, error)
-	GetByID(discussionID string) (response.Discussion, error)
-	GetByUserID(userID string, privacy string) ([]response.Discussion, error)
-	GetMyDiscussion(userID string) ([]response.Discussion, error)
-	Update(payload payload.UpdateDiscussion, discussionID string, locationName string) (response.Discussion, error)
+	Create(payload payload.CreateDiscussion, UserID string, UrlPictures []string, locationName string, receiverID string) (response.Discussion, error)
+	GetAll(Page int, Size int, SortBy, Status, Privacy, Search, SearchQ string, receiverID string) (*gorm.DB, []response.Discussion, error)
+	GetByID(discussionID string, receiverID string) (response.Discussion, error)
+	GetByUserID(userID string, privacy string, receiverID string) ([]response.Discussion, error)
+	GetMyDiscussion(userID string, receiverID string) ([]response.Discussion, error)
+	Update(payload payload.UpdateDiscussion, discussionID string, locationName string, receiverID string) (response.Discussion, error)
 	Delete(discussionID string) (bool, error)
 }
 
@@ -30,7 +30,7 @@ func NewDiscussionService(repository repository.DiscussionRepository) Discussion
 	return &discussionService{repository: repository}
 }
 
-func (ds *discussionService) Create(payload payload.CreateDiscussion, UserID string, UrlPictures []string, locationName string) (response.Discussion, error) {
+func (ds *discussionService) Create(payload payload.CreateDiscussion, UserID string, UrlPictures []string, locationName string, receiverID string) (response.Discussion, error) {
 
 	Discussion := models.Discussion{
 		UserID:   UserID,
@@ -51,10 +51,10 @@ func (ds *discussionService) Create(payload payload.CreateDiscussion, UserID str
 		return response.Discussion{}, err
 	}
 
-	return *response.DiscussionResponse(discussion), err
+	return *response.DiscussionResponse(discussion, receiverID), err
 }
 
-func (ds *discussionService) GetMyDiscussion(userID string) ([]response.Discussion, error) {
+func (ds *discussionService) GetMyDiscussion(userID string, receiverID string) ([]response.Discussion, error) {
 	var discussions []models.Discussion
 	var err error
 
@@ -62,10 +62,10 @@ func (ds *discussionService) GetMyDiscussion(userID string) ([]response.Discussi
 	if err != nil {
 		return []response.Discussion{}, err
 	}
-	return *response.DiscussionsResponse(discussions), nil
+	return *response.DiscussionsResponse(discussions, receiverID), nil
 }
 
-func (ds *discussionService) GetAll(Page int, Size int, SortBy, Status, Privacy, Search, SearchQ string) (*gorm.DB, []response.Discussion, error) {
+func (ds *discussionService) GetAll(Page int, Size int, SortBy, Status, Privacy, Search, SearchQ string, receiverID string) (*gorm.DB, []response.Discussion, error) {
 	var sort string
 	var search string
 	var searchQ string
@@ -99,18 +99,18 @@ func (ds *discussionService) GetAll(Page int, Size int, SortBy, Status, Privacy,
 		return model, []response.Discussion{}, err
 	}
 
-	return model, *response.DiscussionsResponse(discussions), nil
+	return model, *response.DiscussionsResponse(discussions, receiverID), nil
 }
 
-func (ds *discussionService) GetByID(discussionID string) (response.Discussion, error) {
+func (ds *discussionService) GetByID(discussionID string, receiverID string) (response.Discussion, error) {
 	discussion, err := ds.repository.GetByID(discussionID)
 	if err != nil {
 		return response.Discussion{}, err
 	}
-	return *response.DiscussionResponse(discussion), nil
+	return *response.DiscussionResponse(discussion, receiverID), nil
 }
 
-func (ds *discussionService) GetByUserID(userID string, privacy string) ([]response.Discussion, error) {
+func (ds *discussionService) GetByUserID(userID string, privacy string, receiverID string) ([]response.Discussion, error) {
 	var discussions []models.Discussion
 	var err error
 
@@ -122,10 +122,10 @@ func (ds *discussionService) GetByUserID(userID string, privacy string) ([]respo
 	if err != nil {
 		return []response.Discussion{}, err
 	}
-	return *response.DiscussionsResponse(discussions), nil
+	return *response.DiscussionsResponse(discussions, receiverID), nil
 }
 
-func (ds *discussionService) Update(payload payload.UpdateDiscussion, discussionID string, locationName string) (response.Discussion, error) {
+func (ds *discussionService) Update(payload payload.UpdateDiscussion, discussionID string, locationName string, receiverID string) (response.Discussion, error) {
 	discussion, err := ds.repository.GetByID(discussionID)
 	if err != nil {
 		return response.Discussion{}, err
@@ -143,7 +143,7 @@ func (ds *discussionService) Update(payload payload.UpdateDiscussion, discussion
 	if err != nil {
 		return response.Discussion{}, err
 	}
-	return *response.DiscussionResponse(updatedDiscussion), nil
+	return *response.DiscussionResponse(updatedDiscussion, receiverID), nil
 }
 
 func (ds *discussionService) Delete(DiscussionID string) (bool, error) {
