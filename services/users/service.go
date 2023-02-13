@@ -141,8 +141,16 @@ func (us *userService) UpdateUser(payload payload.AccountPayload, userID string)
 	if err != nil {
 		return response.User{}, err
 	}
-	user.Name = payload.Name
-	user.Email = payload.Email
+
+	if payload.Name != "" {
+		user.Name = payload.Name
+	}
+	if payload.Email != "" {
+		user.Email = payload.Email
+	}
+	if payload.Address != "" {
+		user.Address = payload.Address
+	}
 
 	updatedUser, err := us.repository.Update(user)
 	if err != nil {

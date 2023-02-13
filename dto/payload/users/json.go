@@ -7,8 +7,9 @@ type RegisterPayload struct {
 }
 
 type AccountPayload struct {
-	Name  string `json:"name" validate:"required,min=4,max=100"`
-	Email string `json:"email" validate:"required,email"`
+	Name    string `json:"name" validate:"min=4,max=100"`
+	Email   string `json:"email" validate:"email"`
+	Address string `json:"address" validate:"min=10,max=50"`
 }
 
 type LoginPayload struct {

@@ -184,6 +184,7 @@ func (uh *userHandler) UserProfile(c echo.Context) error {
 func (uh *userHandler) Update(c echo.Context) error {
 	claims := middlewares.DecodeTokenClaims(c)
 	var input payload.AccountPayload
+	emailExist := false
 
 	if err := c.Bind(&input); err != nil {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "invalid request", nil, err.Error())
@@ -193,7 +194,10 @@ func (uh *userHandler) Update(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
-	emailExist, _ := uh.service.GetByEmail(input.Email)
+	if input.Email != "" {
+		emailExist, _ = uh.service.GetByEmail(input.Email)
+	}
+
 	if emailExist {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, "Email Already Exist")
 	}
@@ -224,6 +228,7 @@ func (uh *userHandler) GetAll(c echo.Context) error {
 func (uh *userHandler) UpdateByAdmin(c echo.Context) error {
 	userID := c.Param("user_id")
 	var input payload.AccountPayload
+	emailExist := false
 
 	if err := c.Bind(&input); err != nil {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "invalid request", nil, err.Error())
@@ -233,7 +238,9 @@ func (uh *userHandler) UpdateByAdmin(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 
-	emailExist, _ := uh.service.GetByEmail(input.Email)
+	if input.Email != "" {
+		emailExist, _ = uh.service.GetByEmail(input.Email)
+	}
 	if emailExist {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, "Email Already Exist")
 	}
