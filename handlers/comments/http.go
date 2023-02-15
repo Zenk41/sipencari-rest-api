@@ -72,7 +72,7 @@ func (ch *commentHandler) Create(c echo.Context) error {
 func (ch *commentHandler) GetAll(c echo.Context) error {
 	claim := middlewares.DecodeTokenClaims(c)
 	discussionID := c.Param("discussion_id")
-	res, err := ch.service.GetAll(discussionID, claim.Id)
+	res, err := ch.service.GetAll(discussionID, claim.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
