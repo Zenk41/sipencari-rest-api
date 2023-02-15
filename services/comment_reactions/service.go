@@ -46,7 +46,7 @@ func (crs *comReactionService) React(payload payload.CommentReaction, commentID,
 		}
 	}
 	react.Helpful = constant.HelpfulEnum(payload.Helpful)
-	reaction, err := crs.repository.Update(react)
+	reaction, err := crs.repository.Update(react, commentID)
 	if err != nil {
 		return false, response.CommentReaction{}, err
 	}
