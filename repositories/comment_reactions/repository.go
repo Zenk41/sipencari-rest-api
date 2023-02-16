@@ -11,7 +11,7 @@ type comReactionRepository struct {
 
 type ComReactionRepository interface {
 	Create(reaction models.CommentReaction) (models.CommentReaction, error)
-	Update(reaction models.CommentReaction, commentID string) (models.CommentReaction, error)
+	Update(reaction models.CommentReaction, commentID string, userID string) (models.CommentReaction, error)
 	Delete(commentID, userID string) (bool, error)
 	GetByID(commentID, userID string) (models.CommentReaction, error)
 	GetAll(commentID string) ([]models.CommentReaction, error)
@@ -30,8 +30,8 @@ func (crr *comReactionRepository) Create(reaction models.CommentReaction) (model
 	return reaction, err
 
 }
-func (crr *comReactionRepository) Update(reaction models.CommentReaction, commentID string) (models.CommentReaction, error) {
-	err := crr.conn.Preload("User").Where("comment_id=?", commentID).Updates(&reaction).Error
+func (crr *comReactionRepository) Update(reaction models.CommentReaction, commentID string, userID string) (models.CommentReaction, error) {
+	err := crr.conn.Preload("User").Where("comment_id = ? AND user_id = ?", commentID, userID).Updates(&reaction).Error
 	return reaction, err
 }
 
