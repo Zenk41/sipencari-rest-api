@@ -37,9 +37,9 @@ func CommentResponse(comment models.Comment, userID string) *Comment {
 	var LikeTotalC int = 0
 	var HelpfulNo int = 0
 	var HelpfulYes int = 0
-	var ICommentLike bool
-	var CommentReactionYes bool
-	var CommentReactionNo bool
+	var ICommentLike bool = false
+	var CommentReactionYes bool = false
+	var CommentReactionNo bool = false
 
 	// Like in Comment
 	var likesC []resLikesC.CommentLike
@@ -48,9 +48,7 @@ func CommentResponse(comment models.Comment, userID string) *Comment {
 		LikeTotalC += 1
 		if userID == like.UserID {
 			ICommentLike = true
-		} else {
-			ICommentLike = false
-		}
+		} 
 		likesC = append(likesC, resLikesC.CommentLike{
 			UserID: like.UserID,
 			User: resUser.User{
@@ -93,9 +91,6 @@ func CommentResponse(comment models.Comment, userID string) *Comment {
 		} else if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulYes.String() {
 			CommentReactionNo = false
 			CommentReactionYes = true
-		} else {
-			CommentReactionNo = false
-			CommentReactionYes = false
 		}
 		reactionsC = append(reactionsC, resReactC.CommentReaction{
 			UserID: reaction.UserID,
@@ -146,9 +141,9 @@ func CommentsResponse(comments []models.Comment, userID string) *[]Comment {
 		var LikeTotalC int = 0
 		var HelpfulNo int = 0
 		var HelpfulYes int = 0
-		var ICommentLike bool
-		var CommentReactionYes bool
-		var CommentReactionNo bool
+		var ICommentLike bool = false
+		var CommentReactionYes bool = false
+		var CommentReactionNo bool = false
 
 		// Like in Comment
 		var likesC []resLikesC.CommentLike
@@ -157,9 +152,7 @@ func CommentsResponse(comments []models.Comment, userID string) *[]Comment {
 			LikeTotalC += 1
 			if userID == like.UserID {
 				ICommentLike = true
-			} else {
-				ICommentLike = false
-			}
+			} 
 			likesC = append(likesC, resLikesC.CommentLike{
 				UserID: like.UserID,
 				User: resUser.User{
@@ -202,9 +195,6 @@ func CommentsResponse(comments []models.Comment, userID string) *[]Comment {
 			} else if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulYes.String() {
 				CommentReactionNo = false
 				CommentReactionYes = true
-			} else {
-				CommentReactionNo = false
-				CommentReactionYes = false
 			}
 			reactionsC = append(reactionsC, resReactC.CommentReaction{
 				UserID: reaction.UserID,
