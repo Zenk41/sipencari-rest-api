@@ -38,7 +38,7 @@ type Discussion struct {
 func DiscussionResponse(discussion models.Discussion, userID string) *Discussion {
 	var CommentTotalD int = 0
 	var LikeTotalD int = 0
-	var IDiscussionLike bool
+	var IDiscussionLike bool = false
 
 	// picture
 	var pictures []resPicD.DiscussionPicture
@@ -60,8 +60,6 @@ func DiscussionResponse(discussion models.Discussion, userID string) *Discussion
 		LikeTotalD += 1
 		if userID == like.UserID {
 			IDiscussionLike = true
-		} else {
-			IDiscussionLike = false
 		}
 		likes = append(likes, resLikesD.DiscussionLike{
 			UserID: like.UserID,
@@ -85,9 +83,9 @@ func DiscussionResponse(discussion models.Discussion, userID string) *Discussion
 		var LikeTotalC int = 0
 		var HelpfulNo int = 0
 		var HelpfulYes int = 0
-		var ICommentLike bool
-		var CommentReactionYes bool
-		var CommentReactionNo bool
+		var ICommentLike bool = false
+		var CommentReactionYes bool = false
+		var CommentReactionNo bool = false
 		CommentTotalD += 1
 		// Picture in Comment
 		var picturesC []resComPic.CommentPicture
@@ -109,8 +107,6 @@ func DiscussionResponse(discussion models.Discussion, userID string) *Discussion
 			LikeTotalC += 1
 			if userID == like.UserID {
 				ICommentLike = true
-			} else {
-				ICommentLike = false
 			}
 			likesC = append(likesC, resComLike.CommentLike{
 				UserID: like.UserID,
@@ -142,9 +138,6 @@ func DiscussionResponse(discussion models.Discussion, userID string) *Discussion
 			} else if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulYes.String() {
 				CommentReactionNo = false
 				CommentReactionYes = true
-			} else {
-				CommentReactionNo = false
-				CommentReactionYes = false
 			}
 			reactionsC = append(reactionsC, resComReaction.CommentReaction{
 				UserID: reaction.UserID,
@@ -225,7 +218,7 @@ func DiscussionsResponse(discussions []models.Discussion, userID string) *[]Disc
 	for _, discussion := range discussions {
 		var CommentTotalD int = 0
 		var LikeTotalD int = 0
-		var IDiscussionLike bool
+		var IDiscussionLike bool = false
 
 		// picture
 		var pictures []resPicD.DiscussionPicture
@@ -247,8 +240,6 @@ func DiscussionsResponse(discussions []models.Discussion, userID string) *[]Disc
 			LikeTotalD += 1
 			if userID == like.UserID {
 				IDiscussionLike = true
-			} else {
-				IDiscussionLike = false
 			}
 			likes = append(likes, resLikesD.DiscussionLike{
 				UserID: like.UserID,
@@ -272,9 +263,9 @@ func DiscussionsResponse(discussions []models.Discussion, userID string) *[]Disc
 			var LikeTotalC int = 0
 			var HelpfulNo int = 0
 			var HelpfulYes int = 0
-			var ICommentLike bool
-			var CommentReactionYes bool
-			var CommentReactionNo bool
+			var ICommentLike bool = false
+			var CommentReactionYes bool = false
+			var CommentReactionNo bool = false
 			CommentTotalD += 1
 			// Picture in Comment
 			var picturesC []resComPic.CommentPicture
@@ -296,8 +287,6 @@ func DiscussionsResponse(discussions []models.Discussion, userID string) *[]Disc
 				LikeTotalC += 1
 				if userID == like.UserID {
 					ICommentLike = true
-				} else {
-					ICommentLike = false
 				}
 				likesC = append(likesC, resComLike.CommentLike{
 					UserID: like.UserID,
@@ -329,9 +318,6 @@ func DiscussionsResponse(discussions []models.Discussion, userID string) *[]Disc
 				} else if userID == reaction.UserID && reaction.Helpful.String() == constant.HelpfulYes.String() {
 					CommentReactionNo = false
 					CommentReactionYes = true
-				} else {
-					CommentReactionNo = false
-					CommentReactionYes = false
 				}
 				reactionsC = append(reactionsC, resComReaction.CommentReaction{
 					UserID: reaction.UserID,
