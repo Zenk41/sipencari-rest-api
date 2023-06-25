@@ -83,9 +83,6 @@ func (cr *commentRepository) Update(comment models.Comment, commentID string) (m
 		Preload("CommentReactions").
 		Preload("CommentReactions.User").
 		Where("comment_id = ?", comment.CommentID).
-		Clauses(clause.OnConflict{
-			UpdateAll: true,
-		}).
 		Updates(&comment).Error
 
 	return comment, err

@@ -200,9 +200,6 @@ func (dr *discussionRepository) Update(Discussion models.Discussion) (models.Dis
 		Preload("DiscussionLikes").
 		Preload("DiscussionLikes.User").
 		Where("discussion_id = ?", Discussion.DiscussionID).
-		Clauses(clause.OnConflict{
-			UpdateAll: true,
-		}).
 		Updates(&Discussion).Error
 	return Discussion, err
 }
