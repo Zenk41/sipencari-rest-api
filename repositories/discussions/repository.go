@@ -185,6 +185,7 @@ func (dr *discussionRepository) GetByUserIDWithPrivacy(UserID string, Privacy st
 	return rec, error
 }
 
+// update
 func (dr *discussionRepository) Update(Discussion models.Discussion) (models.Discussion, error) {
 	err := dr.conn.
 		Preload("User").
