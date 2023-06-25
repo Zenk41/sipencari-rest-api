@@ -6,7 +6,6 @@ import (
 	"github.com/Zenk41/sipencari-rest-api/constant"
 	"github.com/Zenk41/sipencari-rest-api/models"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type discussionRepository struct {
@@ -186,6 +185,7 @@ func (dr *discussionRepository) GetByUserIDWithPrivacy(UserID string, Privacy st
 	return rec, error
 }
 
+// update
 func (dr *discussionRepository) Update(Discussion models.Discussion) (models.Discussion, error) {
 	err := dr.conn.
 		Preload("User").
