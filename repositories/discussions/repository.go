@@ -202,7 +202,7 @@ func (dr *discussionRepository) Update(Discussion models.Discussion) (models.Dis
 		Preload("DiscussionLikes.User").
 		Model(&Discussion).
 		Where("discussion_id = ?", Discussion.DiscussionID).
-		Select("title, category, content, status, privacy").
+		Select("title", "category", "content", "status", "privacy", "discussion_location").
 		Updates(&Discussion).Error
 	return Discussion, err
 }
