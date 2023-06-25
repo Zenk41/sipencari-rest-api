@@ -6,7 +6,6 @@ import (
 	"github.com/Zenk41/sipencari-rest-api/constant"
 	"github.com/Zenk41/sipencari-rest-api/models"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type discussionRepository struct {

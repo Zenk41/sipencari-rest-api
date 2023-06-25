@@ -3,7 +3,6 @@ package comments
 import (
 	"github.com/Zenk41/sipencari-rest-api/models"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type commentRepository struct {
