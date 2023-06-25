@@ -3,6 +3,7 @@ package comments
 import (
 	"github.com/Zenk41/sipencari-rest-api/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type commentRepository struct {
@@ -81,7 +82,11 @@ func (cr *commentRepository) Update(comment models.Comment, commentID string) (m
 		Preload("CommentPictures").
 		Preload("CommentReactions").
 		Preload("CommentReactions.User").
-		Save(&comment).Error
+		Where("comment_id = ?", comment.CommentID).
+		Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).
+		Updates(&comment).Error
 
 	return comment, err
 }

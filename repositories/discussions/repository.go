@@ -6,6 +6,7 @@ import (
 	"github.com/Zenk41/sipencari-rest-api/constant"
 	"github.com/Zenk41/sipencari-rest-api/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type discussionRepository struct {
@@ -197,7 +198,12 @@ func (dr *discussionRepository) Update(Discussion models.Discussion) (models.Dis
 		Preload("Comments.CommentReactions").
 		Preload("Comments.CommentReactions.User").
 		Preload("DiscussionLikes").
-		Preload("DiscussionLikes.User").Save(&Discussion).Error
+		Preload("DiscussionLikes.User").
+		Where("discussion_id = ?", Discussion.DiscussionID).
+		Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).
+		Updates(&Discussion).Error
 	return Discussion, err
 }
 
