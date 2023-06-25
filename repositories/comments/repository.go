@@ -75,15 +75,14 @@ func (cr *commentRepository) GetByID(commentID string) (models.Comment, error) {
 }
 func (cr *commentRepository) Update(comment models.Comment, commentID string) (models.Comment, error) {
 	err := cr.conn.
+	Session(&gorm.Session{FullSaveAssociations: true}).
 		Preload("User").
 		Preload("CommentLikes").
 		Preload("CommentLikes.User").
 		Preload("CommentPictures").
 		Preload("CommentReactions").
 		Preload("CommentReactions.User").
-		Model(&comment).
-		Where("comment_id = ?", comment.CommentID).
-		Updates(&comment).Error
+		Save(&comment).Error
 
 	return comment, err
 }

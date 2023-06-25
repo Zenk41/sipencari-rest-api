@@ -188,6 +188,7 @@ func (dr *discussionRepository) GetByUserIDWithPrivacy(UserID string, Privacy st
 // update
 func (dr *discussionRepository) Update(Discussion models.Discussion) (models.Discussion, error) {
 	err := dr.conn.
+	Session(&gorm.Session{FullSaveAssociations: true}).
 		Preload("User").
 		Preload("DiscussionPictures").
 		Preload("DiscussionLocation").
@@ -199,9 +200,7 @@ func (dr *discussionRepository) Update(Discussion models.Discussion) (models.Dis
 		Preload("Comments.CommentReactions.User").
 		Preload("DiscussionLikes").
 		Preload("DiscussionLikes.User").
-		Model(&Discussion).
-		Where("discussion_id = ?", Discussion.DiscussionID).
-		Updates(&Discussion).Error
+		Save(&Discussion).Error
 	return Discussion, err
 }
 
