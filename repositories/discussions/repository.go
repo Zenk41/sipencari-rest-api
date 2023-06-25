@@ -199,6 +199,7 @@ func (dr *discussionRepository) Update(Discussion models.Discussion) (models.Dis
 		Preload("Comments.CommentReactions.User").
 		Preload("DiscussionLikes").
 		Preload("DiscussionLikes.User").
+		Model(&Discussion).
 		Where("discussion_id = ?", Discussion.DiscussionID).
 		Updates(&Discussion).Error
 	return Discussion, err
