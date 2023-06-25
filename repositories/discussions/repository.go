@@ -200,7 +200,10 @@ func (dr *discussionRepository) Update(Discussion models.Discussion) (models.Dis
 		Preload("Comments.CommentReactions.User").
 		Preload("DiscussionLikes").
 		Preload("DiscussionLikes.User").
-		Save(&Discussion).Error
+		Model(&Discussion).
+		Where("discussion_id = ?", Discussion.DiscussionID).
+		Select("title, category, content, status, privacy").
+		Updates(&Discussion).Error
 	return Discussion, err
 }
 
