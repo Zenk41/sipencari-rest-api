@@ -82,7 +82,9 @@ func (cr *commentRepository) Update(comment models.Comment, commentID string) (m
 		Preload("CommentPictures").
 		Preload("CommentReactions").
 		Preload("CommentReactions.User").
-		Save(&comment).Error
+		Model(&comment).
+		Where("comment_id = ?", comment.CommentID).
+		Select("message").Updates(&comment).Error
 
 	return comment, err
 }
