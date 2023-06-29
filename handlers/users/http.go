@@ -184,7 +184,10 @@ func (uh *userHandler) UserProfile(c echo.Context) error {
 func (uh *userHandler) Update(c echo.Context) error {
 	claims := middlewares.DecodeTokenClaims(c)
 	var input payload.AccountPayload
+	var res any
+	var err error
 	emailExist := false
+	user, _ := uh.service.GetByID(claims.ID)
 
 	if err := c.Bind(&input); err != nil {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "invalid request", nil, err.Error())
@@ -199,10 +202,15 @@ func (uh *userHandler) Update(c echo.Context) error {
 	}
 
 	if emailExist {
-		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, "Email Already Exist")
+		if input.Email != user.Email {
+			return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "Email Already Exist", nil, "Email Already Exist")
+		} else {
+			res, err = uh.service.UpdateUser(input, claims.ID)
+		}
+	} else {
+		res, err = uh.service.UpdateUser(input, claims.ID)
 	}
 
-	res, err := uh.service.UpdateUser(input, claims.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
