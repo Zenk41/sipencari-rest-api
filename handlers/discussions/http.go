@@ -153,7 +153,7 @@ func (dh *discussionHandler) Update(c echo.Context) error {
 	locationName, err := helper.GetAdressFromLatLng(c, input.Lat, input.Lng)
 
 	if discussion.UserID != claims.ID {
-		if claims.Role != constant.RoleAdmin.String() || claims.Role != constant.RoleSuperadmin.String() {
+		if claims.Role != constant.RoleAdmin.String() && claims.Role != constant.RoleSuperadmin.String() {
 			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		} else {
 			res, err = dh.service.Update(input, discussionID, locationName.FormatedAddress, claims.ID)
@@ -179,7 +179,7 @@ func (dh *discussionHandler) Delete(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
 	if discussion.UserID != claims.ID {
-		if claims.Role != constant.RoleAdmin.String() || claims.Role != constant.RoleSuperadmin.String() {
+		if claims.Role != constant.RoleAdmin.String() && claims.Role != constant.RoleSuperadmin.String() {
 			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		} else {
 			result, err = dh.service.Delete(discussionID)
