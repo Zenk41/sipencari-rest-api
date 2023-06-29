@@ -105,7 +105,7 @@ func (ch *commentHandler) Update(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 	if comment.UserID != claim.ID {
-		if claim.Role == constant.RoleAdmin.String() || claim.Role == constant.RoleSuperadmin.String() {
+		if claim.Role == string(constant.RoleAdmin) || claim.Role == string(constant.RoleSuperadmin) {
 			res, err = ch.service.Update(commentID, input, claim.ID)
 			if err != nil {
 				return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())

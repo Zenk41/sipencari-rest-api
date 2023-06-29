@@ -157,6 +157,8 @@ func (dh *discussionHandler) Update(c echo.Context) error {
 			res, err = dh.service.Update(input, discussionID, locationName.FormatedAddress, claims.ID)
 
 		} else {
+			print("role"+claims.Role);
+			print("role constant"+constant.RoleAdmin.String())
 			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		}
 		// return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
@@ -166,6 +168,7 @@ func (dh *discussionHandler) Update(c echo.Context) error {
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
+
 
 	return response.NewResponseSuccess(c, http.StatusOK, "success", "data updated", &res)
 }
