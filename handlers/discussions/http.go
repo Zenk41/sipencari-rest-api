@@ -70,7 +70,7 @@ func (dh *discussionHandler) CreateDiscussion(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
 
-	dis, err := dh.service.Create(input, user.ID, urlPictures, locationName.FormatedAddress,user.ID)
+	dis, err := dh.service.Create(input, user.ID, urlPictures, locationName.FormatedAddress, user.ID)
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
@@ -153,10 +153,11 @@ func (dh *discussionHandler) Update(c echo.Context) error {
 	locationName, err := helper.GetAdressFromLatLng(c, input.Lat, input.Lng)
 
 	if discussion.UserID != claims.ID {
-		if claims.Role != constant.RoleAdmin.String() && claims.Role != constant.RoleSuperadmin.String() {
-			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
-		} else {
+		if claims.Role == constant.RoleAdmin.String() || claims.Role == constant.RoleSuperadmin.String() {
 			res, err = dh.service.Update(input, discussionID, locationName.FormatedAddress, claims.ID)
+
+		} else {
+			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		}
 		// return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 	} else {
@@ -179,10 +180,10 @@ func (dh *discussionHandler) Delete(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
 	if discussion.UserID != claims.ID {
-		if claims.Role != constant.RoleAdmin.String() && claims.Role != constant.RoleSuperadmin.String() {
-			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
-		} else {
+		if claims.Role == constant.RoleAdmin.String() || claims.Role == constant.RoleSuperadmin.String() {
 			result, err = dh.service.Delete(discussionID)
+		} else {
+			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		}
 		// return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 	} else {
