@@ -105,18 +105,17 @@ func (ch *commentHandler) Update(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
 	if comment.UserID != claim.ID {
-		if claim.Role != constant.RoleAdmin.String() && claim.Role != constant.RoleSuperadmin.String() {
-			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
-		} else {
+		if claim.Role == constant.RoleAdmin.String() || claim.Role == constant.RoleSuperadmin.String() {
 			res, err = ch.service.Update(commentID, input, claim.ID)
 			if err != nil {
 				return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 			}
+		} else {
+			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		}
-	} else{
+	} else {
 		res, err = ch.service.Update(commentID, input, claim.ID)
 	}
-	
 
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
@@ -135,13 +134,13 @@ func (ch *commentHandler) Delete(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
 	if comment.UserID != claims.ID {
-		if claims.Role != constant.RoleAdmin.String() && claims.Role != constant.RoleSuperadmin.String() {
-			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
-		} else {
+		if claims.Role == constant.RoleAdmin.String() || claims.Role == constant.RoleSuperadmin.String() {
 			result, err = ch.service.Delete(commentID)
 			if err != nil {
 				return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 			}
+		} else {
+			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		}
 		// return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 	} else {

@@ -117,10 +117,11 @@ func (fdh *feedbackHandler) DeleteFeedback(c echo.Context) error {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
 	if discussion.UserID != claims.ID {
-		if claims.Role != constant.RoleAdmin.String() && claims.Role != constant.RoleSuperadmin.String() {
-			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
-		} else {
+		if claims.Role == constant.RoleAdmin.String() || claims.Role == constant.RoleSuperadmin.String() {
 			result, err = fdh.service.Delete(feedbackID)
+			
+		} else {
+			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 		}
 		// return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 	} else {
