@@ -96,13 +96,28 @@ func (ch *commentHandler) Update(c echo.Context) error {
 	claim := middlewares.DecodeTokenClaims(c)
 	commentID := c.Param("comment_id")
 	var input payload.UpdateComment
+	var res any
+	comment, err := ch.service.GetByID(commentID, claim.ID)
 	if err := c.Bind(&input); err != nil {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "invalid request", nil, err.Error())
 	}
 	if err := ch.validate.Struct(&input); err != nil {
 		return response.NewResponseFailed(c, http.StatusBadRequest, "failed", "validation failed", nil, err.Error())
 	}
-	res, err := ch.service.Update(commentID, input, claim.ID)
+	if comment.UserID != claim.ID {
+		if claim.Role != constant.RoleAdmin.String() || claim.Role != constant.RoleSuperadmin.String() {
+			return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
+		} else {
+			res, err = ch.service.Update(commentID, input, claim.ID)
+			if err != nil {
+				return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
+			}
+		}
+	} else{
+		res, err = ch.service.Update(commentID, input, claim.ID)
+	}
+	
+
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
@@ -128,7 +143,7 @@ func (ch *commentHandler) Delete(c echo.Context) error {
 				return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 			}
 		}
-		return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
+		// return response.NewResponseFailed(c, http.StatusForbidden, "failed", "user doesnt have access", nil, "")
 	} else {
 		result, err = ch.service.Delete(commentID)
 	}

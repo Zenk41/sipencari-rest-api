@@ -9,6 +9,7 @@ import (
 type User struct {
 	UserID    string    `json:"user_id"`
 	Name      string    `json:"name"`
+	Role      string    `json:"role"`
 	Email     string    `json:"email"`
 	Picture   string    `json:"picture"`
 	Address   string    `json:"address"`
@@ -24,6 +25,7 @@ func UserResponse(user models.User) *User {
 	return &User{
 		UserID:    user.UserID,
 		Name:      user.Name,
+		Role:      string(user.Role),
 		Email:     user.Email,
 		Picture:   user.Picture,
 		Address:   user.Address,
@@ -38,6 +40,7 @@ func UsersResponse(users []models.User) *[]User {
 		response := User{
 			UserID:    user.UserID,
 			Name:      user.Name,
+			Role:      string(user.Role),
 			Email:     user.Email,
 			Picture:   user.Picture,
 			Address:   user.Address,
