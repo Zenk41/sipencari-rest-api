@@ -201,11 +201,15 @@ func (us *userService) ChangePassword(payload payload.ChangePasswordPayload, use
 		return response.User{}, err
 	}
 
+
+
 	if payload.NewPassword == payload.OldPassword {
 		return response.User{}, errors.New("Cant Use the same password")
 	}
 
-	user.Password = payload.NewPassword
+	if err := user.CheckPassword(payload.OldPassword); err != nil {
+		return response.User{}, errors.New("Different old password")
+	}
 
 	if err := user.EncryptPassword(user.Password); err != nil {
 		return response.User{}, err
