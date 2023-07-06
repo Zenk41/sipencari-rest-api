@@ -136,6 +136,7 @@ func (uh *userHandler) ChangePassword(c echo.Context) error {
 	claims := middlewares.DecodeTokenClaims(c)
 
 	res, err := uh.service.ChangePassword(input, claims.ID)
+
 	if err != nil {
 		return response.NewResponseFailed(c, http.StatusInternalServerError, "failed", "internal server error", nil, err.Error())
 	}
