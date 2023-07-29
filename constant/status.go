@@ -3,8 +3,8 @@ package constant
 type StatusEnum string
 
 const (
-	StatusFound    StatusEnum = "Found"
-	StatusNotFound StatusEnum = "NotFound"
+	StatusHasBeenFound StatusEnum = "HasBeenFound"
+	StatusNotYetFound  StatusEnum = "NotYetFound"
 )
 
 func (se StatusEnum) String() string {

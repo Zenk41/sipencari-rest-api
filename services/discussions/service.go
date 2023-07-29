@@ -42,7 +42,9 @@ func (ds *discussionService) Create(payload payload.CreateDiscussion, UserID str
 			Lng:          payload.Lng,
 			LocationName: locationName,
 		},
+		Type:    constant.TypeEnum(payload.Type),
 		Status:  constant.StatusEnum(payload.Status),
+		Contact: payload.Contact,
 		Privacy: constant.PrivacyEnum(payload.Privacy),
 	}
 
@@ -136,7 +138,9 @@ func (ds *discussionService) Update(payload payload.UpdateDiscussion, discussion
 	discussion.DiscussionLocation.Lat = payload.Lat
 	discussion.DiscussionLocation.Lng = payload.Lng
 	discussion.Status = constant.StatusEnum(payload.Status)
+	discussion.Type = constant.TypeEnum(payload.Type)
 	discussion.Privacy = constant.PrivacyEnum(payload.Privacy)
+	discussion.Contact = payload.Contact
 	discussion.DiscussionLocation.LocationName = locationName
 
 	updatedDiscussion, err := ds.repository.Update(discussion)

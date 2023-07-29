@@ -28,6 +28,8 @@ type Discussion struct {
 	Comments           []resCommentD.Comment       `json:"comments"`
 	Status             string                      `json:"status"`
 	Privacy            string                      `json:"privacy"`
+	Type               string                      `json:"type"`
+	Contact            string                      `json:"contact"`
 	Ilike              *bool                       `json:"i_like"`
 	LikeTotal          *int                        `json:"like_total"`
 	CommentTotal       *int                        `json:"comment_total"`
@@ -206,6 +208,8 @@ func DiscussionResponse(discussion models.Discussion, userID string) *Discussion
 		Comments:     comments,
 		Status:       string(discussion.Status),
 		Privacy:      string(discussion.Privacy),
+		Type:         string(discussion.Type),
+		Contact:      discussion.Contact,
 		LikeTotal:    &LikeTotalD,
 		CommentTotal: &CommentTotalD,
 		CreatedAt:    discussion.CreatedAt,
@@ -385,6 +389,8 @@ func DiscussionsResponse(discussions []models.Discussion, userID string) *[]Disc
 			Comments:     comments,
 			Status:       string(discussion.Status),
 			Privacy:      string(discussion.Privacy),
+			Type:         string(discussion.Type),
+			Contact:      discussion.Contact,
 			LikeTotal:    &LikeTotalD,
 			CommentTotal: &CommentTotalD,
 			CreatedAt:    discussion.CreatedAt,

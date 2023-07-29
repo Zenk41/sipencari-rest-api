@@ -20,8 +20,9 @@ type Discussion struct {
 	User               User                  `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Comments           []Comment             `json:"comments" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Status             constant.StatusEnum   `json:"status"`
+	Type               constant.TypeEnum     `json:"type"`
 	Privacy            constant.PrivacyEnum  `json:"privacy"`
-	View               int                   `json:"view"`
+	Contact            string                `json:"contact"`
 	CreatedAt          time.Time             `json:"created_at"`
 	UpdatedAt          time.Time             `json:"updated_at"`
 	DeletedAt          gorm.DeletedAt        `json:"deleted_at" gorm:"index"`
