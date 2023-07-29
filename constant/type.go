@@ -7,7 +7,7 @@ const (
 	TypeLost  StatusEnum = "Lost"
 )
 
-func (se TypeEnum) String() string {
-	return string(se)
+func (te TypeEnum) String() string {
+	return string(te)
 }
 
