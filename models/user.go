@@ -10,7 +10,7 @@ import (
 )
 
 type User struct {
-	UserID    string            `json:"user_id" gorm:"size:225;primaryKey"`
+	UserID    string            `json:"user_id" gorm:"size:255;primaryKey"`
 	Name      string            `json:"name" gorm:"size:100;"`
 	Email     string            `json:"email" gorm:"size:255;unique"`
 	Password  string            `json:"password" gorm:"size:16;"`
