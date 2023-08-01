@@ -162,7 +162,7 @@ func DiscussionResponse(discussion models.Discussion, userID string) *Discussion
 			CommentPictures: picturesC,
 			CommentLikes:    likesC,
 			CommentReaction: reactionsC,
-			ParrentComment:  comment.ParrentComment,
+			// ParrentComment:  comment.ParrentComment,
 			UserID:          comment.UserID,
 			User: resUser.User{
 				UserID:  comment.UserID,
@@ -344,7 +344,7 @@ func DiscussionsResponse(discussions []models.Discussion, userID string) *[]Disc
 				CommentPictures: picturesC,
 				CommentLikes:    likesC,
 				CommentReaction: reactionsC,
-				ParrentComment:  comment.ParrentComment,
+				// ParrentComment:  comment.ParrentComment,
 				UserID:          comment.UserID,
 				User: resUser.User{
 					UserID:  comment.UserID,

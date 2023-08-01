@@ -6,6 +6,6 @@ type CommentPicture struct {
 	URL string `json:"url" form:"url" validate:"required"`
 }
 
-type AddMultipleDiscussionPicture struct {
+type AddMultipleDCommentPicture struct {
 	URL []string `json:"url" form:"url" validate:"required"`
 }
