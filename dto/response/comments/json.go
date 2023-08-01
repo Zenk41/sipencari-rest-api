@@ -18,7 +18,7 @@ type Comment struct {
 	CommentPictures []resPicC.CommentPicture    `json:"comment_pictures"`
 	CommentLikes    []resLikesC.CommentLike     `json:"comment_likes"`
 	CommentReaction []resReactC.CommentReaction `json:"comment_reactions"`
-	ParrentComment  string                      `json:"parrent_comment"`
+	// ParentComment  string                      `json:"parent_comment"`
 	UserID          string                      `json:"user_id"`
 	User            resUser.User                `json:"user"`
 	IsLike          *bool                       `json:"is_like"`
@@ -113,7 +113,7 @@ func CommentResponse(comment models.Comment, userID string) *Comment {
 		CommentPictures: picturesC,
 		CommentLikes:    likesC,
 		CommentReaction: reactionsC,
-		ParrentComment:  comment.ParrentComment,
+		// ParentComment:  comment.ParentComment,
 		UserID:          comment.UserID,
 		User: resUser.User{
 			UserID:  comment.UserID,
@@ -216,7 +216,7 @@ func CommentsResponse(comments []models.Comment, userID string) *[]Comment {
 			CommentPictures: picturesC,
 			CommentLikes:    likesC,
 			CommentReaction: reactionsC,
-			ParrentComment:  comment.ParrentComment,
+			// ParrentComment:  comment.ParrentComment,
 			UserID:          comment.UserID,
 			User: resUser.User{
 				UserID:  comment.UserID,

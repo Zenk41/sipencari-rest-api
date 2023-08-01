@@ -7,6 +7,7 @@ import (
 )
 
 type DiscussionLike struct {
+	LikeID       uint	`json:"like_id"  gorm:"primaryKey"`
 	UserID       string         `json:"user_id"`
 	User         User           `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	DiscussionID string         `json:"discussion_id"`

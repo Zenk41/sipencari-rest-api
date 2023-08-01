@@ -27,7 +27,7 @@ func NewCommentService(repository repository.CommentRepository) CommentService {
 func (cs *commentService) Create(userID string, discussionID string, pictures []string, payload payload.Comment, receiverID string) (response.Comment, error) {
 	var Comment models.Comment
 	Comment.Message = payload.Message
-	Comment.ParrentComment = payload.ParrentComment
+	// Comment.ParrentComment = payload.ParrentComment
 	Comment.UserID = userID
 	Comment.DiscussionID = discussionID
 

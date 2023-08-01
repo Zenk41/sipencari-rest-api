@@ -48,7 +48,7 @@ func MigrationDB(db *gorm.DB) {
 		&models.DiscussionPicture{},
 		&models.DiscussionLocation{},
 		&models.DiscussionLike{},
-		&models.Feedback{},
+		// &models.Feedback{},
 	)
 }
 
